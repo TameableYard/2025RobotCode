@@ -3,20 +3,29 @@ package frc.robot.subsystems.swerve;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
+import static edu.wpi.first.units.Units.Meter;
+
 import java.io.File;
+
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
+
 import edu.wpi.first.wpilibj.Filesystem;
+import swervelib.parser.SwerveControllerConfiguration;
+import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveDrive;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
     
-    private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
     public SwerveSubsystem(File directory) {
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -36,7 +45,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setModuleEncoderAutoSynchronize(true, 1);
 
-        swerveDrive.pushOffsetsToEncoders();
+        swerveDrive.useExternalFeedbackSensor();
+    }
+
+    public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
+        /**
+         * Change this so the initial pose is fetched from the limelight and/or pathplanner path on startup
+         */
+        swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, new Pose2d(new Translation2d(Meter.of(2), Meter.of(2)), Rotation2d.fromDegrees(0)));
     }
 
     @Override
