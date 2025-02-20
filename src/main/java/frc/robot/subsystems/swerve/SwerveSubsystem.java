@@ -1,6 +1,7 @@
 package frc.robot.subsystems.swerve;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 
 import static edu.wpi.first.units.Units.Meter;
@@ -21,6 +22,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
@@ -61,4 +63,28 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     
+}
+
+private static double adjustSensitivity(double value) {
+    double sign = Math.signum(value);
+    double absvalue = Math.abs(value);
+    value = sign * Math.pow(absvalue, Constants.OperatorConstants.kSensitivity);
+    return value;
+}
+
+public ChassisSpeeds getTargetSpeeds(double xInput, 
+                                     double yInput,
+                                     Rotation2d angle) {
+                                        xInput = adjustSensitivity(xInput);
+                                        yInput = adjustSensitivity(yInput);
+                                        
+                                        return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians(), SwerveConstants.MAX_SPEED);
+                                     }
+
+public Pose2d getPose() {
+    return swerveDrive.getPose();
+}
+
+public Rotation2d getHeading() {
+    return getPose().getRotation();
 }
