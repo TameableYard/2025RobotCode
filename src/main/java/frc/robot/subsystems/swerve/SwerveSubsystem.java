@@ -47,7 +47,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setModuleEncoderAutoSynchronize(true, 1);
 
-        swerveDrive.useExternalFeedbackSensor();
+        swerveDrive.pushOffsetsToEncoders();
     }
 
     public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
@@ -63,7 +63,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     
-}
+
 
 private static double adjustSensitivity(double value) {
     double sign = Math.signum(value);
@@ -87,4 +87,6 @@ public Pose2d getPose() {
 
 public Rotation2d getHeading() {
     return getPose().getRotation();
+}
+
 }
