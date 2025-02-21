@@ -16,6 +16,7 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -68,7 +69,7 @@ public class SwerveSubsystem extends SubsystemBase {
 private static double adjustSensitivity(double value) {
     double sign = Math.signum(value);
     double absvalue = Math.abs(value);
-    value = sign * Math.pow(absvalue, Constants.OperatorConstants.kSensitivity);
+    value = sign * Math.pow(absvalue, Constants.DriverConstants.kSensitivity);
     return value;
 }
 
@@ -89,4 +90,51 @@ public Rotation2d getHeading() {
     return getPose().getRotation();
 }
 
+public SwerveDrive getSwerveDrive() {
+    return swerveDrive;
+}
+
+/**
+   * Gets the current field-relative velocity (x, y and omega) of the robot
+   *
+   * @return A ChassisSpeeds object of the current field-relative velocity
+   */
+public ChassisSpeeds getFieldVelocity() {
+    return swerveDrive.getFieldVelocity();
+}
+
+  /**
+   * Gets the current velocity (x, y and omega) of the robot
+   *
+   * @return A {@link ChassisSpeeds} object of the current velocity
+   */
+public ChassisSpeeds getRobotVelocity() {
+    return swerveDrive.getRobotVelocity();
+}
+
+  /**
+   * Get the {@link SwerveController} in the swerve drive.
+   *
+   * @return {@link SwerveController} from the {@link SwerveDrive}.
+   */
+public SwerveController getSwerveController() {
+    return swerveDrive.swerveController;
+}
+
+  /**
+   * Get the {@link SwerveDriveConfiguration} object.
+   *
+   * @return The {@link SwerveDriveConfiguration} fpr the current drive.
+   */
+public SwerveDriveConfiguration getSwerveDriveConfiguration() {
+    return swerveDrive.swerveDriveConfiguration;
+}
+
+public void drive(Translation2d translation, double rotation, boolean fieldRelative)
+  {
+    swerveDrive.drive(translation,
+                      rotation,
+                      fieldRelative,
+                      false); // Open loop is disabled since it shouldn't be used most of the time.
+  }
 }
