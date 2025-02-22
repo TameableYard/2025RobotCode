@@ -50,10 +50,10 @@ public class RobotContainer {
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
 
-  private DoubleSupplier headingXSupplier;
-  private DoubleSupplier headingYSupplier;
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(headingXSupplier,
-                                                                                             headingYSupplier)
+  //private DoubleSupplier headingXSupplier;
+  //private DoubleSupplier headingYSupplier;
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(() -> driverXbox.getRightX(),
+                                                                                             () -> driverXbox.getRightY())
                                                            .headingWhile(true);
 
 
@@ -68,17 +68,15 @@ public class RobotContainer {
     //drivebase.setDefaultCommand(new FieldOrientedDrive(driveAngularVelocity));
 
     FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
-                                                                   driveAngularVelocity, 
-                                                                   driverXbox::getLeftX, 
-                                                                   driverXbox::getLeftY,
-                                                                   driverXbox.povUp().getAsBoolean(),
-                                                                   driverXbox.povUpRight().getAsBoolean(),
-                                                                   driverXbox.povRight().getAsBoolean(),
-                                                                   driverXbox.povDownRight().getAsBoolean(),
-                                                                   driverXbox.povDown().getAsBoolean(),
-                                                                   driverXbox.povDownLeft().getAsBoolean(),
-                                                                   driverXbox.povLeft().getAsBoolean(),
-                                                                   driverXbox.povUpLeft().getAsBoolean() );
+                                                                   () -> driverXbox.povUp().getAsBoolean(),
+                                                                   () -> driverXbox.povRight().getAsBoolean(),
+                                                                   () -> driverXbox.povLeft().getAsBoolean(),
+                                                                   () -> driverXbox.povDown().getAsBoolean(),
+                                                                   () -> driverXbox.povUpRight().getAsBoolean(),
+                                                                   () -> driverXbox.povDownRight().getAsBoolean(),
+                                                                   () -> driverXbox.povDownLeft().getAsBoolean(),
+                                                                   () -> driverXbox.povUpLeft().getAsBoolean(),
+                                                                   driveDirectAngle);
 
     drivebase.setDefaultCommand(fieldOrientedDrive);
   }
