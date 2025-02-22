@@ -19,18 +19,8 @@ import swervelib.math.SwerveMath;
 public class FieldOrientedDrive extends Command{
     
     private final SwerveSubsystem swerve;
-    //private final DoubleSupplier vX, vY;
-    //private final DoubleSupplier heading;
-    private final BooleanSupplier lookAway;
-    private final BooleanSupplier lookRight;
-    private final BooleanSupplier lookLeft;
-    private final BooleanSupplier lookTowards;
-    private final BooleanSupplier lookAwayRight;
-    private final BooleanSupplier lookTowardsRight;
-    private final BooleanSupplier lookTowardsLeft;
-    private final BooleanSupplier lookAwayLeft;
 
-    private SwerveInputStream inputs;
+    private final SwerveInputStream inputs;
     
         
         //private final Supplier<ChassisSpeeds> velocity;
@@ -38,14 +28,7 @@ public class FieldOrientedDrive extends Command{
     
     
         public FieldOrientedDrive(SwerveSubsystem swerve,
-                                  BooleanSupplier lookAway,
-                                  BooleanSupplier lookRight,
-                                  BooleanSupplier lookLeft,
-                                  BooleanSupplier lookTowards,
-                                  BooleanSupplier lookAwayRight,
-                                  BooleanSupplier lookTowardsRight,
-                                  BooleanSupplier lookTowardsLeft,
-                                  BooleanSupplier lookAwayLeft,
+                                  
                                   SwerveInputStream inputs
                                   
                                   //DoubleSupplier heading//,
@@ -53,14 +36,7 @@ public class FieldOrientedDrive extends Command{
                                   //DoubleSupplier headingY
                                   ) {
                                     this.swerve = swerve;
-                                    this.lookAway = lookAway;
-                                    this.lookRight = lookRight;
-                                    this.lookLeft = lookLeft;
-                                    this.lookTowards = lookTowards;
-                                    this.lookAwayRight = lookAwayRight;
-                                    this.lookTowardsRight = lookTowardsRight;
-                                    this.lookTowardsLeft = lookTowardsLeft;
-                                    this.lookAwayLeft = lookAwayLeft;
+                                    
                                     this.inputs = inputs;
                                     //this.headingX = headingX;
                                     //this.headingY = headingY;
@@ -85,42 +61,21 @@ public class FieldOrientedDrive extends Command{
             //double headingY = 0;
             //DoubleSupplier headingYSupplier;
             
+            ChassisSpeeds desiredSpeeds = inputs.get();
+
             
     
             //These allow for 45 degree angle combinations
             
      
-            if (lookAway.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> 0, () -> -1);
-            }
-            if (lookRight.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> 1, () -> 0);
-            }
-            if (lookLeft.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> -1, () -> 0);
-            }
-            if (lookTowards.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> 0, () -> 1);
-            }
-            if (lookAwayRight.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> 1, () -> -1);
-            }
-            if (lookTowardsRight.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> 1, () -> 1);
-            }
-            if (lookTowardsLeft.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> -1, () -> 1);
-            }
-            if (lookAwayLeft.getAsBoolean()) {
-                inputs = inputs.withControllerHeadingAxis(() -> -1, () -> -1);
-            }
+            
 
         //headingXSupplier = () -> headingX;
         //headingYSupplier = () -> headingY;
 
         //inputs.withControllerHeadingAxis(headingXSupplier, headingYSupplier);
         
-        ChassisSpeeds desiredSpeeds = inputs.get();
+        
 
 
         /*if (resetHeading) {

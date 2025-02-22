@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.commands.swerve.FieldOrientedDrive;
+import frc.robot.commands.swerve.FieldOrientedPOVDrive;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -67,18 +68,7 @@ public class RobotContainer {
     
     //drivebase.setDefaultCommand(new FieldOrientedDrive(driveAngularVelocity));
 
-    FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
-                                                                   () -> driverXbox.povUp().getAsBoolean(),
-                                                                   () -> driverXbox.povRight().getAsBoolean(),
-                                                                   () -> driverXbox.povLeft().getAsBoolean(),
-                                                                   () -> driverXbox.povDown().getAsBoolean(),
-                                                                   () -> driverXbox.povUpRight().getAsBoolean(),
-                                                                   () -> driverXbox.povDownRight().getAsBoolean(),
-                                                                   () -> driverXbox.povDownLeft().getAsBoolean(),
-                                                                   () -> driverXbox.povUpLeft().getAsBoolean(),
-                                                                   driveDirectAngle);
-
-    drivebase.setDefaultCommand(fieldOrientedDrive);
+    
   }
 
   /**
@@ -92,7 +82,25 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    
+    FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
+                                                                   driveDirectAngle);
+
+    FieldOrientedPOVDrive fieldOrientedPOVDrive = new FieldOrientedPOVDrive(drivebase, 
+                                                                   () -> driverXbox.povUp().getAsBoolean(),
+                                                                   () -> driverXbox.povRight().getAsBoolean(),
+                                                                   () -> driverXbox.povLeft().getAsBoolean(),
+                                                                   () -> driverXbox.povDown().getAsBoolean(),
+                                                                   () -> driverXbox.povUpRight().getAsBoolean(),
+                                                                   () -> driverXbox.povDownRight().getAsBoolean(),
+                                                                   () -> driverXbox.povDownLeft().getAsBoolean(),
+                                                                   () -> driverXbox.povUpLeft().getAsBoolean(),
+                                                                   () -> driverXbox.getRightX(),
+                                                                   () -> driverXbox.getRightY(),
+                                                                   driveDirectAngle);
+
+    drivebase.setDefaultCommand(fieldOrientedPOVDrive);
+
+    //driverXbox.povUp().or(driverXbox.povUpRight().or(driverXbox.povRight().or(driverXbox.povDownRight().or(driverXbox.povDown().or(driverXbox.povDownLeft().or(driverXbox.povLeft().or(driverXbox.povUpLeft()))))))).whileTrue(fieldOrientedPOVDrive);
 
     
 
