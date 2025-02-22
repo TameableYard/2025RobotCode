@@ -137,4 +137,10 @@ public void drive(Translation2d translation, double rotation, boolean fieldRelat
                       fieldRelative,
                       false); // Open loop is disabled since it shouldn't be used most of the time.
   }
+  
+public void zeroGyro() {
+    swerveDrive.zeroGyro();
 }
+
+}
+

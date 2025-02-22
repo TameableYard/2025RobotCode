@@ -17,6 +17,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -99,6 +100,8 @@ public class RobotContainer {
                                                                    driveDirectAngle);
 
     drivebase.setDefaultCommand(fieldOrientedPOVDrive);
+
+    driverXbox.start().onTrue((new InstantCommand(drivebase::zeroGyro)));
 
     //driverXbox.povUp().or(driverXbox.povUpRight().or(driverXbox.povRight().or(driverXbox.povDownRight().or(driverXbox.povDown().or(driverXbox.povDownLeft().or(driverXbox.povLeft().or(driverXbox.povUpLeft()))))))).whileTrue(fieldOrientedPOVDrive);
 
