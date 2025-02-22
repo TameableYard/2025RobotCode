@@ -21,21 +21,32 @@ public class FieldOrientedDrive extends Command{
     private final SwerveSubsystem swerve;
     //private final DoubleSupplier vX, vY;
     //private final DoubleSupplier heading;
-    //private final DoubleSupplier headingX;
-    //private final DoubleSupplier headingY;
+    private final BooleanSupplier lookAway;
+    private final BooleanSupplier lookRight;
+    private final BooleanSupplier lookLeft;
+    private final BooleanSupplier lookTowards;
 
     private final SwerveInputStream inputs;
     //private final Supplier<ChassisSpeeds> velocity;
+    
 
 
     public FieldOrientedDrive(SwerveSubsystem swerve,
-                                SwerveInputStream inputs
+                              BooleanSupplier lookAway,
+                              BooleanSupplier lookRight,
+                              BooleanSupplier lookLeft,
+                              BooleanSupplier lookTowards,
+                              SwerveInputStream inputs
                               
                               //DoubleSupplier heading//,
                               //DoubleSupplier headingX,
                               //DoubleSupplier headingY
                               ) {
                                 this.swerve = swerve;
+                                this.lookAway = lookAway;
+                                this.lookRight = lookRight;
+                                this.lookLeft = lookLeft;
+                                this.lookTowards = lookTowards;
                                 this.inputs = inputs;
                                 //this.headingX = headingX;
                                 //this.headingY = headingY;
@@ -53,10 +64,16 @@ public class FieldOrientedDrive extends Command{
 
     @Override
     public void execute() {
-        ChassisSpeeds desiredSpeeds = inputs.get();
+
+        double headingX = 0;
+        DoubleSupplier headingXSupplier;
+        double headingY = 0;
+        DoubleSupplier headingYSupplier;
+        
+        
 
         //These allow for 45 degree angle combinations
-/* 
+ 
         if (lookAway.getAsBoolean()) {
             headingY = -1;
         }
@@ -70,9 +87,15 @@ public class FieldOrientedDrive extends Command{
             headingY = 1;
         }
 
+        headingXSupplier = () -> headingX;
+        headingYSupplier = () -> headingY;
+
+        inputs.withControllerHeadingAxis(headingXSupplier, headingYSupplier);
+        
+        ChassisSpeeds desiredSpeeds = inputs.get();
 
 
-        if (resetHeading) {
+        /*if (resetHeading) {
             if (headingX == 0 &&
                 headingY == 0 && 
                 Math.abs(heading.getAsDouble()) == 0) {

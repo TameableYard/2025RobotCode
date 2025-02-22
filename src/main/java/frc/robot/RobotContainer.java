@@ -13,6 +13,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,8 +49,11 @@ public class RobotContainer {
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driverXbox::getRightX,
-                                                                                             driverXbox::getRightY)
+
+  private DoubleSupplier headingXSupplier;
+  private DoubleSupplier headingYSupplier;
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(headingXSupplier,
+                                                                                             headingYSupplier)
                                                            .headingWhile(true);
 
 
@@ -58,9 +62,23 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    
+    
+    
     //drivebase.setDefaultCommand(new FieldOrientedDrive(driveAngularVelocity));
 
-    FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, driveDirectAngle);
+    FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
+                                                                   driveAngularVelocity, 
+                                                                   driverXbox::getLeftX, 
+                                                                   driverXbox::getLeftY,
+                                                                   driverXbox.povUp().getAsBoolean(),
+                                                                   driverXbox.povUpRight().getAsBoolean(),
+                                                                   driverXbox.povRight().getAsBoolean(),
+                                                                   driverXbox.povDownRight().getAsBoolean(),
+                                                                   driverXbox.povDown().getAsBoolean(),
+                                                                   driverXbox.povDownLeft().getAsBoolean(),
+                                                                   driverXbox.povLeft().getAsBoolean(),
+                                                                   driverXbox.povUpLeft().getAsBoolean() );
 
     drivebase.setDefaultCommand(fieldOrientedDrive);
   }
@@ -75,6 +93,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
+    
 
     
 
