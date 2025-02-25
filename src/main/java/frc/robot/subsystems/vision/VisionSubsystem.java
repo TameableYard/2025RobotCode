@@ -52,7 +52,7 @@ public class VisionSubsystem extends SubsystemBase {
     LimelightSettings limelightSettings;
     LimelightPoseEstimator poseEstimator;
     private final SwerveSubsystem swerve;
-    private final SwerveDriveOdometry3d swerveDriveOdometry3d = swerve.kinematics.get;
+    private final SwerveDriveOdometry3d swerveDriveOdometry3d = swerve.get
     private final Pigeon2 gyro = (Pigeon2) swerve.getSwerveDrive().getGyro().getIMU().;
 
 
@@ -63,7 +63,7 @@ public class VisionSubsystem extends SubsystemBase {
                                .withRobotOrientation(new Orientation3d(swerve.getSwerveDrive().getGyro().getRotation3d(),
                                                                        new AngularVelocity3d(DegreesPerSecond.of(gyro.getRollVelocity()),
                                                                                              DegreesPerSecond.of(gyro.getRollVelocity()),
-                                                                                             DegreesPerSecond.of(gyro.get .getYawVelocity()))))
+                                                                                             DegreesPerSecond.of(swerve.getSwerveDrive().getGyro().getYawAngularVelocity()))))
                                .save();
     }
 
