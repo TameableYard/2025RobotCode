@@ -27,6 +27,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
+
+    private final boolean useVision = false;
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -49,6 +51,12 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive.setModuleEncoderAutoSynchronize(true, 1);
 
         swerveDrive.pushOffsetsToEncoders();
+
+        if (useVision) {
+            setupVision();
+            //stop odometry thread when using vision so updates can be synchronized better
+            swerveDrive.stopOdometryThread();
+        }
     }
 
     public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
@@ -58,9 +66,16 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, new Pose2d(new Translation2d(Meter.of(2), Meter.of(2)), Rotation2d.fromDegrees(0)));
     }
 
+    public void setupVision() {
+        //add the vision shtuff here later
+    }
+
     @Override
     public void periodic() {
-        swerveDrive.updateOdometry();
+        if (useVision) {
+            swerveDrive.updateOdometry();
+            vision.updatePoseEstimation(swerveDrive);
+        }
     }
 
     

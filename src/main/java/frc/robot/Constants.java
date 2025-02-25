@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -34,5 +39,12 @@ public final class Constants {
     public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
     
     
+  }
+
+  public static class VisionConstants {
+    public static final Pose3d LIMELIGHT_POSE = new Pose3d(Inches.of(5).in(Meters),
+                                                            Inches.of(5).in(Meters),
+                                                            Inches.of(5).in(Meters),
+                                                            Rotation3d.kZero);
   }
 }
