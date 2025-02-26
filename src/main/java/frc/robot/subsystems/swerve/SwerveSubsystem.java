@@ -76,6 +76,8 @@ public class SwerveSubsystem extends SubsystemBase {
         vision = new Vision(swerveDrive);
     }
 
+    //TODO: add publishing of pose for advantagescope visualization, per https://docs.advantagescope.org/tab-reference/3d-field
+
     @Override
     public void periodic() {
         if (useVision) {
