@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -42,34 +43,52 @@ import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightSettings;
 import limelight.networktables.Orientation3d;
+import limelight.networktables.PoseEstimate;
 import limelight.networktables.LimelightSettings.LEDMode;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
-public class VisionSubsystem extends SubsystemBase {
+public class Vision {
 
     Limelight limelight;
     LimelightSettings limelightSettings;
     LimelightPoseEstimator poseEstimator;
-    private final SwerveSubsystem swerve;
-    private final SwerveDriveOdometry3d swerveDriveOdometry3d = swerve.get
-    private final Pigeon2 gyro = (Pigeon2) swerve.getSwerveDrive().getGyro().getIMU().;
+    
+    public Pigeon2 getPigeon2(SwerveDrive swerveDrive) {
+        return (Pigeon2) swerveDrive.getGyro().getIMU();
+   }
 
 
-    public VisionSubsystem() {
+    public Vision(SwerveDrive swerveDrive) {
         limelight = new Limelight("limelight");
         limelight.getSettings().withLimelightLEDMode(LEDMode.PipelineControl)
                                .withCameraOffset(VisionConstants.LIMELIGHT_POSE)
-                               .withRobotOrientation(new Orientation3d(swerve.getSwerveDrive().getGyro().getRotation3d(),
-                                                                       new AngularVelocity3d(DegreesPerSecond.of(gyro.getRollVelocity()),
-                                                                                             DegreesPerSecond.of(gyro.getRollVelocity()),
-                                                                                             DegreesPerSecond.of(swerve.getSwerveDrive().getGyro().getYawAngularVelocity()))))
+                               .withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
+                                                                       new AngularVelocity3d(DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityXDevice().getValueAsDouble()),
+                                                                                             DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()),
+                                                                                             DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityZDevice().getValueAsDouble()))))
                                .save();
+
+        
+
+        
+        
     }
 
+    public void updatePoseEstimation(SwerveDrive swerveDrive) {
+        // Get MegaTag2 pose
+        Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(true).getPoseEstimate();
+        // If the pose is present
+        visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
+            // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
+            if (Math.abs(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
+                //poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999)); no stddevs as for some reason yall does not (seemingly) support setting stddevs for vision measurements yet
+                swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
+        }
+        });
+    }
+    
 
-    
-    
     
 
 }

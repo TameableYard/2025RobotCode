@@ -3,11 +3,13 @@ package frc.robot.subsystems.swerve;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.vision.Vision;
 
 import static edu.wpi.first.units.Units.Meter;
 
 import java.io.File;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
 
 import edu.wpi.first.wpilibj.Filesystem;
@@ -24,9 +26,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry3d;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
+
+    private Vision vision;
 
     private final boolean useVision = false;
     
@@ -68,6 +73,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setupVision() {
         //add the vision shtuff here later
+        vision = new Vision(swerveDrive);
     }
 
     @Override
