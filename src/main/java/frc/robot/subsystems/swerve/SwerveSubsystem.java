@@ -11,7 +11,13 @@ import java.io.File;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveControlParameters;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -68,6 +74,7 @@ public class SwerveSubsystem extends SubsystemBase {
             //stop odometry thread when using vision so updates can be synchronized better
             swerveDrive.stopOdometryThread();
         }
+        //setupPathPlanner();
     }
 
     public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
@@ -96,6 +103,52 @@ public class SwerveSubsystem extends SubsystemBase {
         //arrayPublisher.set(new)
         
     }
+
+public void setupPathPlanner() {
+    //load the RobotConfig from the GUI settings
+    //TODO: store in Constants file
+    RobotConfig config;
+    try {
+        config = RobotConfig.fromGUISettings();
+
+        final boolean enableFeedforward = true;
+        //configure autobuilder last
+        AutoBuilder.configure(
+            this::getPose,
+            this::resetOdometry,
+            this::getRobotVelocity,
+            (speedsRobotRelative, moduleFeedForwards) -> {
+                if (enableFeedforward) {
+                    swerveDrive.drive(
+                        speedsRobotRelative,
+                        swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                        moduleFeedForwards.linearForces()
+                    );
+                } else {
+                    swerveDrive.setChassisSpeeds(speedsRobotRelative);
+                }
+            },
+                new PPHolonomicDriveController(
+                    new PIDConstants(5.0, 0.0, 0.0),
+                    new PIDConstants(5.0, 0.0, 0.0)
+                ),
+                config,
+                () -> {
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this
+        );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            PathfindingCommand.warmupCommand().schedule();
+    
+}
 
     
 
@@ -174,6 +227,10 @@ public void drive(Translation2d translation, double rotation, boolean fieldRelat
   
 public void zeroGyro() {
     swerveDrive.zeroGyro();
+}
+
+public void resetOdometry(Pose2d initialHolonomicPose){
+  swerveDrive.resetOdometry(initialHolonomicPose);
 }
 
 }
