@@ -42,7 +42,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private Vision vision;
 
-    private final boolean useVision = false;
+    private final boolean useVision = true;
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -81,7 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
         /**
          * Change this so the initial pose is fetched from the limelight and/or pathplanner path on startup
          */
-        swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, new Pose2d(new Translation2d(Meter.of(2), Meter.of(2)), Rotation2d.fromDegrees(0)));
+        swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, new Pose2d(new Translation2d(Meter.of(16.38), Meter.of(6.03)), Rotation2d.fromDegrees(0)));
     }
 
     public void setupVision() {

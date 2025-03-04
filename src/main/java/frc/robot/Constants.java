@@ -42,9 +42,9 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final Pose3d LIMELIGHT_POSE = new Pose3d(Inches.of(5).in(Meters),
-                                                            Inches.of(5).in(Meters),
-                                                            Inches.of(5).in(Meters),
-                                                            Rotation3d.kZero);
+    public static final Pose3d LIMELIGHT_POSE = new Pose3d(0.0,
+                                                            -0.2744,
+                                                            0.2286,
+                                                            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(32.005), Units.degreesToRadians(90)));
   }
 }

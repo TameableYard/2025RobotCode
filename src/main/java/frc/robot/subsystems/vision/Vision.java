@@ -62,12 +62,13 @@ public class Vision {
     public Vision(SwerveDrive swerveDrive) {
         limelight = new Limelight("limelight");
         limelight.getSettings().withLimelightLEDMode(LEDMode.PipelineControl)
-                               .withCameraOffset(VisionConstants.LIMELIGHT_POSE)
-                               .withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
+                                .withCameraOffset(VisionConstants.LIMELIGHT_POSE)/* */
+                                .withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
                                                                        new AngularVelocity3d(DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityXDevice().getValueAsDouble()),
                                                                                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()),
                                                                                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityZDevice().getValueAsDouble()))))
-                               .save();
+                                //.withImuMode()
+                                .save();
 
         
 
@@ -80,11 +81,28 @@ public class Vision {
         Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(true).getPoseEstimate();
         // If the pose is present
         visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-            // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
-            if (Math.abs(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
-                //poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999)); no stddevs as for some reason yall does not (seemingly) support setting stddevs for vision measurements yet
-                swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
-        }
+            if (visionEstimate.get().tagCount > 0) {
+                // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
+                if (Math.abs(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
+                    //poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999)); no stddevs as for some reason yall does not (seemingly) support setting stddevs for vision measurements yet
+                    swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
+                }
+            }
+        });
+    }
+
+    public void getPoseEstimationMegatag1(SwerveDrive swerveDrive) {
+        // Get MegaTag1 pose
+        Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(false).getPoseEstimate();
+        // If the pose is present
+        visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
+            if (visionEstimate.get().tagCount > 0) {
+                // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
+                if (Math.abs(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
+                    //poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999)); no stddevs as for some reason yall does not (seemingly) support setting stddevs for vision measurements yet
+                    swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
+                }
+            }
         });
     }
     
