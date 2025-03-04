@@ -67,7 +67,7 @@ public class Vision {
                                                                        new AngularVelocity3d(DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityXDevice().getValueAsDouble()),
                                                                                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()),
                                                                                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityZDevice().getValueAsDouble()))))
-                                .withImuMode(LimelightSettings.ImuMode.ExternalImu)
+                                .withImuMode(LimelightSettings.ImuMode.InternalImu)
                                 .save();
 
         
