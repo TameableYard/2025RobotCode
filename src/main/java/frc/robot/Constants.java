@@ -76,12 +76,8 @@ public final class Constants {
     public static final double kMaxAccelerationRadPerSecSquared = 1;
     //public static final double kArmOffsetRads = Math.PI/2;
     public static final double kEncoderDistancePerRotation = 2*Math.PI;
-    public static final double kStartingPos = Math.toRadians(75);//0.214*Math.PI*2;//0.610
-    public static final double kAmpShootPos = Math.toRadians(90); //0.269*Math.PI*2;//0.665
-    public static final double kClimbingandFrontSpeakerShootPos = Math.toRadians(15); //was 15, changed to 18 to compensate for bad offset0.396*Math.PI*2; //0.396
-    public static final double kIntakePos = Math.toRadians(5);
     public static final double kPivotReduction = 27;
-    public static final double kPivotAllowedClosedLoopError = (Rotations.of((Degrees.of(0.01)).in(Rotations) * PivotConstants.kPivotReduction)).in(Rotations);
+    public static final double kPivotAllowedClosedLoopError = (Rotations.of((Degrees.of(0.01)).in(Rotations))).in(Rotations);
     public static boolean pivotMotorInverted = false;
   }
 }

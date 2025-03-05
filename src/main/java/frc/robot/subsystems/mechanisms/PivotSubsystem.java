@@ -87,13 +87,17 @@ public class PivotSubsystem extends SubsystemBase {
       .inverted(PivotConstants.pivotMotorInverted)
       .closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      
       .pid(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD)
-      .outputRange(-1, 1)
+      .outputRange(0, 1)
       .maxMotion
+      
       .maxVelocity(PivotConstants.kMaxVelocityRadPerSecond)
       .maxAcceleration(PivotConstants.kMaxAccelerationRadPerSecSquared)
       .allowedClosedLoopError(PivotConstants.kPivotAllowedClosedLoopError)
       ;
+
+    pivotConfig.encoder.positionConversionFactor(1/27);
 //TODO: figure out if the motor is inverted or not
     pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -142,7 +146,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void synchronizeEncoders() {
-    motorEncoder.setPosition(Rotations.of(throughboreEncoder.get()).in(Rotations) / 27);
+    motorEncoder.setPosition(Rotations.of(throughboreEncoder.get()).in(Rotations));
   }
 
   public void reachSetpoint(double setPointDegree) {
@@ -165,7 +169,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   public static Angle convertAngleToSensorUnits(Angle measurement)
     {
-      return Rotations.of(measurement.in(Rotations) * PivotConstants.kPivotReduction);
+      return Rotations.of(measurement.in(Rotations));// * PivotConstants.kPivotReduction);
     }
 
     /**
@@ -176,7 +180,7 @@ public class PivotSubsystem extends SubsystemBase {
      */
     public static Angle convertSensorUnitsToAngle(Angle measurement)
     {
-      return Rotations.of(measurement.in(Rotations) / PivotConstants.kPivotReduction);
+      return Rotations.of(measurement.in(Rotations));// / PivotConstants.kPivotReduction);
 
     }
 
