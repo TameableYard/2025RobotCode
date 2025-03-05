@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotations;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -69,13 +71,17 @@ public final class Constants {
     public static final double kAVoltSecondSquaredPerRad = 0.01;
     public static final double kSVolts = 0.8; //try 0.8 if it doesn't work
     public static final double kP = 45; //tiny oscillation at 50
+    public static final double kI = 0;
+    public static final double kD = 0;
     public static final double kMaxAccelerationRadPerSecSquared = 1;
     //public static final double kArmOffsetRads = Math.PI/2;
     public static final double kEncoderDistancePerRotation = 2*Math.PI;
     public static final double kStartingPos = Math.toRadians(75);//0.214*Math.PI*2;//0.610
     public static final double kAmpShootPos = Math.toRadians(90); //0.269*Math.PI*2;//0.665
     public static final double kClimbingandFrontSpeakerShootPos = Math.toRadians(15); //was 15, changed to 18 to compensate for bad offset0.396*Math.PI*2; //0.396
-    public static final double kIntakePos = Math.toRadians(5); 
+    public static final double kIntakePos = Math.toRadians(5);
+    public static final double kPivotReduction = 27;
+    public static final double kPivotAllowedClosedLoopError = (Rotations.of((Degrees.of(0.01)).in(Rotations) * PivotConstants.kPivotReduction)).in(Rotations);
     public static boolean pivotMotorInverted = false;
   }
 }
