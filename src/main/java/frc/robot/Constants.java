@@ -47,4 +47,35 @@ public final class Constants {
                                                             0.2286,
                                                             new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(32.005), Units.degreesToRadians(90)));
   }
+
+  public static class MotorLimit {
+    public static class Neo {
+      public static final int stall = 60;
+      public static final int free  = 40;
+      public static final int stallRPM = 0; // 0 for linear limit
+    }
+    public static class Neo550 {
+      public static final int stall = 40;
+      public static final int free  = 20;
+      public static final int stallRPM = 0; // 0 for linear limit
+    }
+  }
+
+  public static class PivotConstants {
+    public static final int kPivotMotorPort = 26;
+    public static final double kMaxVelocityRadPerSecond = 1;
+    public static final double kGVolts = 0.18;
+    public static final double kVVoltSecondPerRad = 11.13;
+    public static final double kAVoltSecondSquaredPerRad = 0.01;
+    public static final double kSVolts = 0.8; //try 0.8 if it doesn't work
+    public static final double kP = 45; //tiny oscillation at 50
+    public static final double kMaxAccelerationRadPerSecSquared = 1;
+    //public static final double kArmOffsetRads = Math.PI/2;
+    public static final double kEncoderDistancePerRotation = 2*Math.PI;
+    public static final double kStartingPos = Math.toRadians(75);//0.214*Math.PI*2;//0.610
+    public static final double kAmpShootPos = Math.toRadians(90); //0.269*Math.PI*2;//0.665
+    public static final double kClimbingandFrontSpeakerShootPos = Math.toRadians(15); //was 15, changed to 18 to compensate for bad offset0.396*Math.PI*2; //0.396
+    public static final double kIntakePos = Math.toRadians(5); 
+    public static boolean pivotMotorInverted = false;
+  }
 }
