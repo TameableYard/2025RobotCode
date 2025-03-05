@@ -53,6 +53,8 @@ public class Vision {
     Limelight limelight;
     LimelightSettings limelightSettings;
     LimelightPoseEstimator poseEstimator;
+
+    Orientation3d robotOrientation3d;
     
     public Pigeon2 getPigeon2(SwerveDrive swerveDrive) {
         return (Pigeon2) swerveDrive.getGyro().getIMU();
@@ -77,6 +79,11 @@ public class Vision {
     }
 
     public void updatePoseEstimation(SwerveDrive swerveDrive) {
+
+        //update robot orientation
+
+        updateRobotOrientation(swerveDrive);
+
         // Get MegaTag2 pose
         Optional<PoseEstimate> visionEstimate = limelight.getPoseEstimator(true).getPoseEstimate();
         // If the pose is present
@@ -104,6 +111,13 @@ public class Vision {
                 }
             }
         });
+    }
+
+    public void updateRobotOrientation(SwerveDrive swerveDrive) {
+        limelight.getSettings().withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
+        new AngularVelocity3d(DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityXDevice().getValueAsDouble()),
+                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()),
+                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityZDevice().getValueAsDouble()))));
     }
     
 
