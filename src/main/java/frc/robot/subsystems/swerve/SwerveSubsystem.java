@@ -42,7 +42,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private Vision vision;
 
-    private final boolean useVision = true;
+    private final boolean useVision = false; //change once limelight is on production bot
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
