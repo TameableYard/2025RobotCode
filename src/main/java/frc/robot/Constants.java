@@ -64,7 +64,7 @@ public final class Constants {
   }
 
   public static class PivotConstants {
-    public static final int kPivotMotorPort = 26;
+    public static final int kPivotMotorPort = 50;
     public static final double kMaxVelocityRadPerSecond = 1;
     public static final double kGVolts = 0.27; //calculated as 0.22 without coral
     public static final double kVVoltSecondPerRad = 0.53;

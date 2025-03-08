@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.mechanisms.PivotSubsystem;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import swervelib.SwerveInputStream;
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.commands.mechanisms.pivot.PivotTestCommand;
 import frc.robot.commands.swerve.FieldOrientedDrive;
 import frc.robot.commands.swerve.FieldOrientedPOVDrive;
  
@@ -34,6 +35,10 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverXbox =
       new CommandXboxController(DriverConstants.kDriverControllerPort);
+
+  private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
+
+  private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -80,6 +85,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
+    driverXbox.a().whileTrue(pivotTestCommand);
 
     FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
                                                                    driveDirectAngle);

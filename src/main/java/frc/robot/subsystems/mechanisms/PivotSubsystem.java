@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.RelativeEncoder;
@@ -30,7 +29,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // A robot arm subsystem that moves with a motion profile.
@@ -89,7 +87,7 @@ public class PivotSubsystem extends SubsystemBase {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       
       .pid(PivotConstants.kP, PivotConstants.kI, PivotConstants.kD)
-      .outputRange(0, 1)
+      .outputRange(-1, 1)
       .maxMotion
       
       .maxVelocity(PivotConstants.kMaxVelocityRadPerSecond)
@@ -182,6 +180,14 @@ public class PivotSubsystem extends SubsystemBase {
     {
       return Rotations.of(measurement.in(Rotations));// / PivotConstants.kPivotReduction);
 
+    }
+
+    public double getThroughborePos() {
+      return Rotations.of(throughboreEncoder.get()).in(Rotations);
+    }
+
+    public double getMotorPos() {
+      return motorEncoder.getPosition();
     }
 
 }
