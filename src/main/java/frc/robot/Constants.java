@@ -70,7 +70,7 @@ public final class Constants {
     public static final double kVVoltSecondPerRad = 0.53;
     public static final double kAVoltSecondSquaredPerRad = 0.01 / (Math.PI*2);
     public static final double kSVolts = 0.8; //try 0.8 if it doesn't work
-    public static final double kP = 15; //tiny oscillation at 50
+    public static final double kP = 15;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kMaxAccelerationRadPerSecSquared = 1;
