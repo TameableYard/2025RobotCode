@@ -27,6 +27,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,7 +42,9 @@ public class PivotSubsystem extends SubsystemBase {
 
   private final RelativeEncoder motorEncoder = pivotMotor.getEncoder();
 
-  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(4, 1, 0.386);
+  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(4, 1, 0.935);
+  
+  
   /*pivotConfig.smartCurrentLimit(Constants.MotorLimit.Neo.stall,
   Constants.MotorLimit.Neo.free,
   Constants.MotorLimit.Neo.stallRPM);*/
@@ -73,8 +77,16 @@ public class PivotSubsystem extends SubsystemBase {
           PivotConstants.kSVolts, PivotConstants.kGVolts,
           PivotConstants.kVVoltSecondPerRad, PivotConstants.kAVoltSecondSquaredPerRad);
 
+  //private ShuffleboardTab pivotTab = Shuffleboard.getTab("Vision");
+
+
   // Create a new ArmSubsystem. 
   public PivotSubsystem() {
+
+    /*Shuffleboard.getTab("Pivot")
+        .add("Motor Encoder Pos", motorEncoder);
+        Shuffleboard.getTab("Pivot")
+        .add("Throughbore Encoder Pos", throughboreEncoder);*/
 
     SparkMaxConfig pivotConfig = new SparkMaxConfig();
 
@@ -144,7 +156,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void synchronizeEncoders() {
-    motorEncoder.setPosition(Rotations.of(throughboreEncoder.get()).in(Rotations));
+    motorEncoder.setPosition(Rotations.of(getThroughborePos()).in(Rotations));
   }
 
   public void reachSetpoint(double setPointDegree) {
@@ -152,7 +164,7 @@ public class PivotSubsystem extends SubsystemBase {
     boolean rioPID       = true;
     if (rioPID)
     {
-      double pidOutput     = pivotProfiledPIDController.calculate(throughboreEncoder.get(), goalPosition);
+      double pidOutput     = pivotProfiledPIDController.calculate(getThroughborePos(), goalPosition);
       State  setpointState = pivotProfiledPIDController.getSetpoint();
       pivotMotor.setVoltage(pidOutput +
                          armFeedforward.calculate(setpointState.position,
