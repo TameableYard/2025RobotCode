@@ -161,8 +161,8 @@ public class PivotSubsystem extends SubsystemBase {
     motorEncoder.setPosition(Rotations.of(getThroughborePos()).in(Rotations));
   }
 
-  public void reachSetpoint(double setPointDegree) {
-    double  goalPosition = convertAngleToSensorUnits(Rotations.of(setPointDegree)).in(Rotations);
+  public void reachSetpoint(double setPointRadian) {
+    double  goalPosition = convertAngleToSensorUnits(Rotations.of(setPointRadian)).in(Rotations);
     boolean rioPID       = true;
     if (rioPID)
     {
