@@ -95,7 +95,7 @@ public class PivotSubsystem extends SubsystemBase {
       .allowedClosedLoopError(PivotConstants.kPivotAllowedClosedLoopError)
       ;
 
-    pivotConfig.encoder.positionConversionFactor(1/27);
+    //TODO: fix this, it causes errors currently but is neede: pivotConfig.encoder.positionConversionFactor(1/27);
 //TODO: figure out if the motor is inverted or not
     pivotMotor.configure(pivotConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 

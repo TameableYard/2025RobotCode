@@ -27,7 +27,7 @@ public final class Constants {
   public static class DriverConstants {
     public static final int kDriverControllerPort = 0;
     public static final double kSensitivity = 3;
-    public static final double DEADBAND = 0.8;
+    public static final double DEADBAND = 0.3;
   }
 
   public static class OperatorConstants {
