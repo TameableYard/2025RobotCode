@@ -5,6 +5,7 @@
 package frc.robot.subsystems.mechanisms;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.List;
@@ -29,6 +30,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.PivotConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,7 +44,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   private final RelativeEncoder motorEncoder = pivotMotor.getEncoder();
 
-  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(4, 1, 0.935);
+  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(4, 1, 0.935);//0.402 for 0 to be right as in unit circle
   
   
   /*pivotConfig.smartCurrentLimit(Constants.MotorLimit.Neo.stall,
@@ -160,14 +162,16 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public void reachSetpoint(double setPointDegree) {
-    double  goalPosition = convertAngleToSensorUnits(Degrees.of(setPointDegree)).in(Rotations);
+    double  goalPosition = convertAngleToSensorUnits(Rotations.of(setPointDegree)).in(Rotations);
     boolean rioPID       = true;
     if (rioPID)
     {
       double pidOutput     = pivotProfiledPIDController.calculate(getThroughborePos(), goalPosition);
       State  setpointState = pivotProfiledPIDController.getSetpoint();
+
+      SmartDashboard.putNumber("pidOutput", pidOutput);
       pivotMotor.setVoltage(pidOutput +
-                         armFeedforward.calculate(setpointState.position,
+                         armFeedforward.calculate(Rotations.of(setpointState.position).in(Radians),
                                                  setpointState.velocity)
                         );
     } else
@@ -196,6 +200,10 @@ public class PivotSubsystem extends SubsystemBase {
 
     public double getThroughborePos() {
       return Rotations.of(throughboreEncoder.get()).in(Rotations);
+    }
+
+    public double getThroughborePosRadians() {
+      return Rotations.of(throughboreEncoder.get() - 0.473).in(Radians);
     }
 
     public double getMotorPos() {

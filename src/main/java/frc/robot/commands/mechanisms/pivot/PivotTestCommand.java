@@ -25,6 +25,7 @@ public class PivotTestCommand extends Command {
         }*/
         SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
         SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
+        SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
         
 
         
@@ -39,6 +40,14 @@ public class PivotTestCommand extends Command {
         
         SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
         SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
+        SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
+
+        pivotSubsystem.reachSetpoint(0.55);
     }
+/* 
+    @Override
+    public void end() {
+        
+    }*/
     
 }

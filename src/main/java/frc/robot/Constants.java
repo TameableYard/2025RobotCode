@@ -65,12 +65,12 @@ public final class Constants {
 
   public static class PivotConstants {
     public static final int kPivotMotorPort = 50;
-    public static final double kMaxVelocityRadPerSecond = 1;
+    public static final double kMaxVelocityRadPerSecond = 0.25;
     public static final double kGVolts = 0.27; //calculated as 0.22 without coral
     public static final double kVVoltSecondPerRad = 0.53;
     public static final double kAVoltSecondSquaredPerRad = 0.01 / (Math.PI*2);
     public static final double kSVolts = 0.8; //try 0.8 if it doesn't work
-    public static final double kP = 45; //tiny oscillation at 50
+    public static final double kP = 15; //tiny oscillation at 50
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kMaxAccelerationRadPerSecSquared = 1;
