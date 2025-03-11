@@ -5,12 +5,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.mechanisms.PivotSubsystem;
 
-public class PivotTestCommand extends Command {
+public class PivotInCommand extends Command {
 
     //private ShuffleboardTab pivotTab = Shuffleboard.getTab("Pivot");
 
     private final PivotSubsystem pivotSubsystem;
-    public PivotTestCommand(PivotSubsystem subsystem) {
+    public PivotInCommand(PivotSubsystem subsystem) {
         pivotSubsystem = subsystem;
         addRequirements(pivotSubsystem);
     }
@@ -24,8 +24,8 @@ public class PivotTestCommand extends Command {
         SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
         SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
         SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
-        
-        
+        //whatever deg this is
+        pivotSubsystem.reachSetpoint(0.48);
 
         
     }

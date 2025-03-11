@@ -161,8 +161,15 @@ public class PivotSubsystem extends SubsystemBase {
     motorEncoder.setPosition(Rotations.of(getThroughborePos()).in(Rotations));
   }
 
-  public void reachSetpoint(double setPointRadian) {
-    double  goalPosition = convertAngleToSensorUnits(Rotations.of(setPointRadian)).in(Rotations);
+  public void noSetpoint() {
+    boolean rioPID = true;
+    if (rioPID) {
+      pivotMotor.setVoltage(0);
+    }
+  }
+
+  public void reachSetpoint(double setPointRotation) {
+    double  goalPosition = convertAngleToSensorUnits(Rotations.of(setPointRotation)).in(Rotations);
     boolean rioPID       = true;
     if (rioPID)
     {
@@ -171,9 +178,16 @@ public class PivotSubsystem extends SubsystemBase {
 
       SmartDashboard.putNumber("pidOutput", pidOutput);
       pivotMotor.setVoltage(pidOutput +
-                         armFeedforward.calculate(Rotations.of(setpointState.position).in(Radians),
-                                                 setpointState.velocity)
-                        );
+                         //armFeedforward.calculate(Rotations.of(setpointState.position).in(Radians), setpointState.velocity)
+                         armFeedforward.calculate(getThroughborePosRadians(), setpointState.velocity)                        
+                         );
+
+                        SmartDashboard.putNumber("pid voltage: ", pidOutput);
+                        SmartDashboard.putNumber("feedforward voltage: ", armFeedforward.calculate(Rotations.of(setpointState.position).in(Radians),
+                        setpointState.velocity));
+                        SmartDashboard.putNumber("combined voltage: ", pidOutput +
+                        armFeedforward.calculate(Rotations.of(setpointState.position).in(Radians),
+                                                setpointState.velocity));
     } else
     {
       pivotClosedLoopController.setReference(goalPosition,
@@ -203,7 +217,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public double getThroughborePosRadians() {
-      return Rotations.of(throughboreEncoder.get() - 0.473).in(Radians);
+      return Rotations.of(throughboreEncoder.get() - 0.386).in(Radians); // was 0.473
     }
 
     public double getMotorPos() {

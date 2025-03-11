@@ -7,12 +7,16 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import swervelib.math.Matter;
 
 /**
@@ -79,5 +83,43 @@ public final class Constants {
     public static final double kPivotReduction = 27;
     public static final double kPivotAllowedClosedLoopError = (Rotations.of((Degrees.of(0.01)).in(Rotations))).in(Rotations);
     public static boolean pivotMotorInverted = false;
+
+    public static final double kVerticalRot = 0.48;
+    public static final double kStowRot = 0.07;
+    public static final double kOutRot = 0.55; //TODO: get value
+    public static final double kInRot = 0.55; //TODO: get value
+    public static final double kClimbRot = 0.55; //TODO: get value
+    public static final double kScoreRot = 0.37;
   }
+  
+  public static class ElevatorConstants {
+    public static final int kBackMotorPort = 30;
+    public static final int kFrontMotorPort = 31;
+
+    public static final double kElevatorKp = 26.722;
+    public static final double kElevatorKi = 0;
+    public static final double kElevatorKd = 1.6047;
+
+    public static final double kElevatorkS = 0.01964; // volts (V)
+    public static final double kElevatorkV = 3.894; // volt per velocity (V/(m/s))
+    public static final double kElevatorkA = 0.173; // volt per acceleration (V/(m/s²))
+    public static final double kElevatorkG = 0.91274; // volts (V)
+
+    public static final double kElevatorGearing    = 8.45;
+    public static final double kElevatorDrumRadius = Units.inchesToMeters(1.0);
+    public static final double kCarriageMass       = 4.0; // kg
+
+    // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
+    public static final Distance kLaserCANOffset    = Inches.of(3);
+    public static final Distance kStartingHeightSim = Meters.of(0);
+    public static final Distance kMinElevatorHeight = Meters.of(0.0);
+    public static final Distance kMaxElevatorHeight = Meters.of(1.6764);
+
+
+    public static double kElevatorRampRate = 0.1;
+    public static int    kElevatorCurrentLimit = 40;
+    public static double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
+    public static double kMaxAcceleration = Meters.of(8).per(Second).per(Second).in(MetersPerSecondPerSecond);
+  }
+
 }
