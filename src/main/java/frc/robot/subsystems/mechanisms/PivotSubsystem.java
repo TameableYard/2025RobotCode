@@ -44,7 +44,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   private final RelativeEncoder motorEncoder = pivotMotor.getEncoder();
 
-  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(4, 1, 0.935);//0.402 for 0 to be right as in unit circle
+  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(2, 1, 0.935);//0.402 for 0 to be right as in unit circle
   
   
   /*pivotConfig.smartCurrentLimit(Constants.MotorLimit.Neo.stall,

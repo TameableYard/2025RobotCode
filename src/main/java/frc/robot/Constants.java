@@ -96,7 +96,7 @@ public final class Constants {
     public static final int kBackMotorPort = 30;
     public static final int kFrontMotorPort = 31;
 
-    public static final double kElevatorKp = 16.0;//26.722;
+    public static final double kElevatorKp = 30;//26.722;;//16;
     public static final double kElevatorKi = 0;
     public static final double kElevatorKd = 0;//1.6047;
 
@@ -105,7 +105,7 @@ public final class Constants {
     public static final double kElevatorkA = 0.09;//173; // volt per acceleration (V/(m/s²)) nh
     public static final double kElevatorkG = 0.91274; // volts (V)
 
-    public static final double kElevatorGearing    = 8.45/2;
+    public static final double kElevatorGearing    = 8.45/3; // was 2
 
     public static final double kElevatorSprocketTeeth = 22;
     public static final double kElevatorPitch = Units.inchesToMeters(0.25);
@@ -123,6 +123,35 @@ public final class Constants {
     public static int    kElevatorCurrentLimit = 40;
     public static double kMaxVelocity = Meters.of(0.25).per(Second).in(MetersPerSecond); //2.5 //0.5
     public static double kMaxAcceleration = Meters.of(0.75).per(Second).per(Second).in(MetersPerSecondPerSecond); //2
+
+    public static double kL1Height = 0.25;
+    public static double kL2Height = 0.5;
+    public static double kL3Height = 0.75;
+    public static double kL4Height = 1.0;
+    public static double kBottom = 0.0;
+    public static double kHumanPlayerStation = 0.0;
+  }
+
+  public static class ShooterConstants {
+    public static int kBigShooterMotorPort = 35;
+    public static int kSmallShooterMotorPort = 36;
+
+    public static double kFlywheelGearing = 4.0;
+
+    public static double kBigFlywheelMomentOfInertia = 0.00012916529; //kg * m^2
+    public static double kSmallFlywheelMomentOfInertia = 4.3228437e-5; //kg * m^2
+
+    public static double kStateStdDevs = 3.0;
+    public static double kMeasurementStdDevs = 0.01;
+    public static double kQelms = 80.0;
+    public static double kRelms = 12.0;
+
+    public static double kMaxVoltage = 12.0;
+
+    public static int kBigSpunUpRPM = 5500;
+    public static int kSmallSpunUpRPM = 5500;
+
+
   }
 
 }
