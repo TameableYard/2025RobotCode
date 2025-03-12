@@ -52,9 +52,9 @@ public class ElevatorSubsystem extends SubsystemBase
 {
 
   public final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMinElevatorHeight,
-                                                                            Inches.of(3)));
+                                                                            Inches.of(5)));
   public final Trigger atMax = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMaxElevatorHeight,
-                                                                            Inches.of(3)));
+                                                                            Inches.of(5)));
 
 
   // This gearbox represents a gearbox containing 1 Neo
@@ -71,6 +71,8 @@ public class ElevatorSubsystem extends SubsystemBase
   private final SparkMax m_FrontMotor = new SparkMax(ElevatorConstants.kFrontMotorPort, MotorType.kBrushless);
   
   private final RelativeEncoder m_BackEncoder  = m_BackMotor.getEncoder();
+
+  private final RelativeEncoder m_FrontEncoder = m_FrontMotor.getEncoder();
 
 
   private final DigitalInput m_limitSwitchLow    = new DigitalInput(1);
@@ -169,10 +171,39 @@ public class ElevatorSubsystem extends SubsystemBase
   public void reachGoal(double goal)
   {
     double voltsOut = MathUtil.clamp(
-        m_controller.calculate(getHeightMeters(), goal) +
+        m_controller.calculate(getHeightMeters(), goal)/* +
+        m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
+                                              m_controller.getSetpoint().velocity)*/, -7, 7);
+    m_BackMotor.setVoltage(voltsOut);
+  }
+
+  /**
+   * Fake control loop to reach and maintain goal.
+   *
+   * @param goal the position to maintain
+   */
+  public void reachFakeGoal(double fakeGoal)
+  {
+    double voltsOut = MathUtil.clamp(
+        m_controller.calculate(getHeightMeters(), fakeGoal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
                                               m_controller.getSetpoint().velocity), -7, 7);
-    m_BackMotor.setVoltage(voltsOut);
+    SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), fakeGoal));
+    SmartDashboard.putNumber("elevatorFeedforwardVoltage: ", (m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
+    m_controller.getSetpoint().velocity)));
+    SmartDashboard.putNumber("elevatorTotalVoltage: ", voltsOut);
+  }
+
+  public double frontMCAppliedOutput() {
+    return m_FrontMotor.getAppliedOutput();
+  }
+
+  public double backMCAppliedOutput() {
+    return m_BackMotor.getAppliedOutput();
+  }
+
+  public void stopMotors() {
+    m_BackMotor.setVoltage(0);
   }
 
   /**
@@ -218,6 +249,17 @@ public class ElevatorSubsystem extends SubsystemBase
   public double getHeightMeters()
   {
     return (m_BackEncoder.getPosition() / ElevatorConstants.kElevatorGearing) *
+           (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius);
+  }
+
+  /**
+   * Get the height in meters using the seconday encoder.
+   *
+   * @return Height in meters
+   */
+  public double getHeightMetersFrontEncoder()
+  {
+    return (m_FrontEncoder.getPosition() / ElevatorConstants.kElevatorGearing) *
            (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius);
   }
 

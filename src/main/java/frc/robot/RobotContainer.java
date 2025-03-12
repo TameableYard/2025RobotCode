@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
 import frc.robot.subsystems.mechanisms.PivotSubsystem;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -19,7 +20,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.mechanisms.elevator.ElevatorTestCommand;
 import frc.robot.commands.mechanisms.pivot.PivotTestCommand;
+//import frc.robot.subsystems.mechanisms.ElevatorSubsystem.runSysIdRoutine;
 import frc.robot.commands.swerve.FieldOrientedDrive;
 import frc.robot.commands.swerve.FieldOrientedPOVDrive;
  
@@ -39,6 +42,12 @@ public class RobotContainer {
   private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
   private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
+
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+
+  private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem);
+
+  //private final runSysIdRoutine runsysidroutine = new runSysIdRoutine(elevatorSubsystem);
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -85,8 +94,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    driverXbox.b().whileTrue(elevatorTestCommand);
 
     driverXbox.a().whileTrue(pivotTestCommand);
+
+    //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
     FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
                                                                    driveDirectAngle);

@@ -96,30 +96,33 @@ public final class Constants {
     public static final int kBackMotorPort = 30;
     public static final int kFrontMotorPort = 31;
 
-    public static final double kElevatorKp = 26.722;
+    public static final double kElevatorKp = 16.0;//26.722;
     public static final double kElevatorKi = 0;
-    public static final double kElevatorKd = 1.6047;
+    public static final double kElevatorKd = 0;//1.6047;
 
     public static final double kElevatorkS = 0.01964; // volts (V)
-    public static final double kElevatorkV = 3.894; // volt per velocity (V/(m/s))
-    public static final double kElevatorkA = 0.173; // volt per acceleration (V/(m/s²))
+    public static final double kElevatorkV = 3.07;//894; // volt per velocity (V/(m/s))
+    public static final double kElevatorkA = 0.09;//173; // volt per acceleration (V/(m/s²)) nh
     public static final double kElevatorkG = 0.91274; // volts (V)
 
-    public static final double kElevatorGearing    = 8.45;
-    public static final double kElevatorDrumRadius = Units.inchesToMeters(1.0);
-    public static final double kCarriageMass       = 4.0; // kg
+    public static final double kElevatorGearing    = 8.45/2;
+
+    public static final double kElevatorSprocketTeeth = 22;
+    public static final double kElevatorPitch = Units.inchesToMeters(0.25);
+    public static final double kElevatorDrumRadius = (kElevatorSprocketTeeth * kElevatorPitch) / (2 * Math.PI);//Units.inchesToMeters(1.0);
+    public static final double kCarriageMass       = 18.1; // kg
 
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
     public static final Distance kLaserCANOffset    = Inches.of(3);
     public static final Distance kStartingHeightSim = Meters.of(0);
     public static final Distance kMinElevatorHeight = Meters.of(0.0);
-    public static final Distance kMaxElevatorHeight = Meters.of(1.6764);
+    public static final Distance kMaxElevatorHeight = Meters.of(1.6764); //1.1176
 
 
     public static double kElevatorRampRate = 0.1;
     public static int    kElevatorCurrentLimit = 40;
-    public static double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
-    public static double kMaxAcceleration = Meters.of(8).per(Second).per(Second).in(MetersPerSecondPerSecond);
+    public static double kMaxVelocity = Meters.of(0.25).per(Second).in(MetersPerSecond); //2.5 //0.5
+    public static double kMaxAcceleration = Meters.of(0.75).per(Second).per(Second).in(MetersPerSecondPerSecond); //2
   }
 
 }
