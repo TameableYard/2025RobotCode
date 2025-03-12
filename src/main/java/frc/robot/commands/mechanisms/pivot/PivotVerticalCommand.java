@@ -25,7 +25,7 @@ public class PivotVerticalCommand extends Command {
         SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
         SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
         //vertical
-        pivotSubsystem.reachSetpoint(0.48);
+        pivotSubsystem.reachSetpoint(PivotConstants.kVerticalRot);
 
         
     }
@@ -41,7 +41,7 @@ public class PivotVerticalCommand extends Command {
         SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
         SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
 
-        //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
+        pivotSubsystem.reachSetpoint(PivotConstants.kVerticalRot); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override

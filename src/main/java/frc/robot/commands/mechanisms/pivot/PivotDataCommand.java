@@ -48,5 +48,10 @@ public class PivotDataCommand extends Command {
     public void end(boolean interrupted) {
         //pivotSubsystem.noSetpoint();
     }
+
+    @Override
+    public boolean runsWhenDisabled() {
+        return true;
+    }
     
 }

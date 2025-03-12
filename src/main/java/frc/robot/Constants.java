@@ -84,7 +84,7 @@ public final class Constants {
     public static final double kPivotAllowedClosedLoopError = (Rotations.of((Degrees.of(0.01)).in(Rotations))).in(Rotations);
     public static boolean pivotMotorInverted = false;
 
-    public static final double kVerticalRot = 0.48;
+    public static final double kVerticalRot = 0.51; //0.48 formerly before chain tightening
     public static final double kStowRot = 0.07;
     public static final double kOutRot = 0.55; //TODO: get value
     public static final double kInRot = 0.55; //TODO: get value
