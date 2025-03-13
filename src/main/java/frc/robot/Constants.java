@@ -90,6 +90,7 @@ public final class Constants {
     public static final double kInRot = 0.55; //TODO: get value
     public static final double kClimbRot = 0.55; //TODO: get value
     public static final double kScoreRot = 0.37;
+    public static final double kHumanPlayerStationRot = 0.55; //TODO: get value
 
     
   }

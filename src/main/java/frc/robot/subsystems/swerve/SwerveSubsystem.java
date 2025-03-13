@@ -42,6 +42,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private Vision vision;
 
+    private boolean blueAlliance;
+
+    private Pose2d startingPose;
+
     private final boolean useVision = false; //change once limelight is on production bot
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
@@ -50,6 +54,19 @@ public class SwerveSubsystem extends SubsystemBase {
     StructArrayPublisher<Pose2d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose2d.struct).publish();
 
     public SwerveSubsystem(File directory) {
+        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) { //TODO: add exception handling for no alliance found
+            blueAlliance = false;
+        } else {
+            blueAlliance = true;
+        }
+
+        startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
+                                                                      Meter.of(4)),
+                                                    Rotation2d.fromDegrees(0))
+                                       : new Pose2d(new Translation2d(Meter.of(16),
+                                                                      Meter.of(4)),
+                                                    Rotation2d.fromDegrees(180));
+
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try {
             swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED);
@@ -67,6 +84,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setModuleEncoderAutoSynchronize(true, 1);
 
+        //TODO: set angular velocity compensation for skew correction after rotating
+
         swerveDrive.pushOffsetsToEncoders();
 
         if (useVision) {
@@ -81,7 +100,7 @@ public class SwerveSubsystem extends SubsystemBase {
         /**
          * Change this so the initial pose is fetched from the limelight and/or pathplanner path on startup
          */
-        swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, new Pose2d(new Translation2d(Meter.of(16.38), Meter.of(6.03)), Rotation2d.fromDegrees(0)));
+        swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, startingPose);//new Pose2d(new Translation2d(Meter.of(16.38), Meter.of(6.03)), Rotation2d.fromDegrees(0)));
     }
 
     public void setupVision() {
