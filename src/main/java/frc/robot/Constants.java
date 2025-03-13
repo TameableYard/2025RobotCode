@@ -35,7 +35,7 @@ public final class Constants {
   }
 
   public static class OperatorConstants {
-
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static class SwerveConstants {
@@ -90,6 +90,8 @@ public final class Constants {
     public static final double kInRot = 0.55; //TODO: get value
     public static final double kClimbRot = 0.55; //TODO: get value
     public static final double kScoreRot = 0.37;
+
+    
   }
   
   public static class ElevatorConstants {
@@ -130,6 +132,8 @@ public final class Constants {
     public static double kL4Height = 1.0;
     public static double kBottom = 0.0;
     public static double kHumanPlayerStation = 0.0;
+
+    public static final double kSafetyHeight = 0.25;
   }
 
   public static class ShooterConstants {

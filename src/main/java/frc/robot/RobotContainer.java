@@ -45,6 +45,9 @@ public class RobotContainer {
   private final CommandXboxController driverXbox =
       new CommandXboxController(DriverConstants.kDriverControllerPort);
 
+  private final CommandXboxController operatorXbox =
+    new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+
   private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
   private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
