@@ -88,9 +88,9 @@ public final class Constants {
     public static final double kStowRot = 0.07;
     public static final double kOutRot = 0.55; //TODO: get value
     public static final double kInRot = 0.55; //TODO: get value
-    public static final double kClimbRot = 0.55; //TODO: get value
-    public static final double kScoreRot = 0.37;
-    public static final double kHumanPlayerStationRot = 0.55; //TODO: get value
+    public static final double kClimbRot = 0.16;
+    public static final double kScoreRot = 0.33;
+    public static final double kHumanPlayerStationRot = 0.104;//0.55;
 
     
   }
@@ -99,7 +99,7 @@ public final class Constants {
     public static final int kBackMotorPort = 30;
     public static final int kFrontMotorPort = 31;
 
-    public static final double kElevatorKp = 30;//26.722;;//16;
+    public static final double kElevatorKp = 25;//10;//30;//26.722;;//16;
     public static final double kElevatorKi = 0;
     public static final double kElevatorKd = 0;//1.6047;
 
@@ -124,15 +124,15 @@ public final class Constants {
 
     public static double kElevatorRampRate = 0.1;
     public static int    kElevatorCurrentLimit = 40;
-    public static double kMaxVelocity = Meters.of(0.25).per(Second).in(MetersPerSecond); //2.5 //0.5
-    public static double kMaxAcceleration = Meters.of(0.75).per(Second).per(Second).in(MetersPerSecondPerSecond); //2
+    public static double kMaxVelocity = Meters.of(0.5).per(Second).in(MetersPerSecond); //2.5 //0.5
+    public static double kMaxAcceleration = Meters.of(1.5).per(Second).per(Second).in(MetersPerSecondPerSecond); //2
 
-    public static double kL1Height = 0.25;
-    public static double kL2Height = 0.5;
-    public static double kL3Height = 0.75;
-    public static double kL4Height = 1.0;
+    public static double kL1Height = 0.45;
+    public static double kL2Height = 0.66;
+    public static double kL3Height = 1.04;
+    public static double kL4Height = 1.64;//1.24; 1.64
     public static double kBottom = 0.0;
-    public static double kHumanPlayerStation = 0.0;
+    public static double kHumanPlayerStation = 0.55;
 
     public static final double kSafetyHeight = 0.25;
   }
@@ -155,6 +155,15 @@ public final class Constants {
 
     public static int kBigSpunUpRPM = 5500;
     public static int kSmallSpunUpRPM = 5500;
+
+    public static int kBigIntakeSpeed = 250;
+    public static int kSmallIntakeSpeed = 250;
+
+    public static int kBigL1Speed = 250;
+    public static int kSmallL1Speed = 250;
+
+    public static int kBigL24Speed = 250;
+    public static int kSmallL24Speed = 250;
 
 
   }

@@ -37,7 +37,7 @@ public class L2Command extends Command {
         
         elevatorSubsystem.reachGoal(ElevatorConstants.kL2Height);
         
-
+        pivotSubsystem.synchronizeEncoders();
         
     }
 
@@ -61,17 +61,18 @@ public class L2Command extends Command {
 
 
         if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight) {
-            pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
+            //pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
         } else {
-            pivotSubsystem.noSetpoint();
+            //pivotSubsystem.noSetpoint();
         }
+        pivotSubsystem.synchronizeEncoders();
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
         //pivotSubsystem.noSetpoint();
-        //elevatorSubsystem.stopMotors();
+        elevatorSubsystem.stopMotors();
     }
     
 }

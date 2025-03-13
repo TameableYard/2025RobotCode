@@ -21,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.combinations.L1Command;
+import frc.robot.commands.combinations.L2Command;
+import frc.robot.commands.combinations.L3Command;
+import frc.robot.commands.combinations.L4Command;
 import frc.robot.commands.mechanisms.elevator.ElevatorDataCommand;
 import frc.robot.commands.mechanisms.elevator.ElevatorTestCommand;
 import frc.robot.commands.mechanisms.pivot.PivotTestCommand;
@@ -115,12 +119,16 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverXbox.b().whileTrue(elevatorTestCommand);
+    //driverXbox.b().whileTrue(elevatorTestCommand);
 
-    driverXbox.a().whileTrue(pivot40Command);//pivotTestCommand);
+    //driverXbox.a().whileTrue(pivot40Command);//pivotTestCommand);
 
-    driverXbox.y().whileTrue(shooterTestCommand);
+    //driverXbox.y().whileTrue(shooterTestCommand);
 
+    driverXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
+    driverXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
+    driverXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
+    driverXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
     FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 

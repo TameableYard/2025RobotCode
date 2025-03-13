@@ -36,7 +36,7 @@ public class L3Command extends Command {
         SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
         
         elevatorSubsystem.reachGoal(ElevatorConstants.kL3Height);
-        
+        pivotSubsystem.synchronizeEncoders();
 
         
     }
@@ -57,21 +57,28 @@ public class L3Command extends Command {
         SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
         SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
 
-        elevatorSubsystem.reachGoal(ElevatorConstants.kL3Height);
+
+        if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kL3Height) {
+            elevatorSubsystem.reachGoal(ElevatorConstants.kL3Height);
+        } else {
+            elevatorSubsystem.stopMotors();
+        }
 
 
         if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight) {
-            pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
+            //pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
         } else {
-            pivotSubsystem.noSetpoint();
+            //pivotSubsystem.noSetpoint();
         }
+
+        pivotSubsystem.synchronizeEncoders();
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
         //pivotSubsystem.noSetpoint();
-        //elevatorSubsystem.stopMotors();
+        elevatorSubsystem.stopMotors();
     }
     
 }
