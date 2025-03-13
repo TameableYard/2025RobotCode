@@ -60,9 +60,19 @@ public class ClimbPositionCommand extends Command {
         elevatorSubsystem.reachGoal(ElevatorConstants.kL4Height);
 
 
-        if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kSafetyHeight && elevator) { //TODO: finish this
+        if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kSafetyHeight && !pivotSubsystem.pivotCloseToPos(PivotConstants.kClimbRot)) { //TODO: finish this
             elevatorSubsystem.reachGoal(ElevatorConstants.kSafetyHeight);
         }
+        else if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kSafetyHeight && pivotSubsystem.pivotCloseToPos(PivotConstants.kClimbRot)) {
+            this.cancel();
+        }
+        else if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight && !pivotSubsystem.pivotCloseToPos(PivotConstants.kClimbRot)) {
+            pivotSubsystem.reachSetpoint(PivotConstants.kClimbRot);
+        }
+        else if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight && pivotSubsystem.pivotCloseToPos(PivotConstants.kClimbRot)) {
+            elevatorSubsystem.reachGoal(ElevatorConstants.kBottom);
+        }
+
 
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }

@@ -224,4 +224,13 @@ public class PivotSubsystem extends SubsystemBase {
       return motorEncoder.getPosition();
     }
 
+    public boolean pivotCloseToPos(double setPoint) {
+      if (setPoint < setPoint + 0.05 && setPoint > setPoint - 0.05) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
 }
