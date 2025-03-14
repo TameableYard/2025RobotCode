@@ -66,9 +66,9 @@ public class L3Command extends Command {
 
 
         if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight) {
-            //pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
+            pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
         } else {
-            //pivotSubsystem.noSetpoint();
+            pivotSubsystem.noSetpoint();
         }
 
         pivotSubsystem.synchronizeEncoders();
@@ -77,7 +77,7 @@ public class L3Command extends Command {
  
     @Override
     public void end(boolean interrupted) {
-        //pivotSubsystem.noSetpoint();
+        pivotSubsystem.noSetpoint();
         elevatorSubsystem.stopMotors();
     }
     

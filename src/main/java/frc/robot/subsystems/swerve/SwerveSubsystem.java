@@ -84,6 +84,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setModuleEncoderAutoSynchronize(true, 1);
 
+        //swerveDrive.setAngularV
+
         //TODO: set angular velocity compensation for skew correction after rotating
 
         swerveDrive.pushOffsetsToEncoders();

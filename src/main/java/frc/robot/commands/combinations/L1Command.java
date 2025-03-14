@@ -61,16 +61,16 @@ public class L1Command extends Command {
         pivotSubsystem.synchronizeEncoders();
 
         if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight) {
-            //pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
+            pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
         } else {
-            //pivotSubsystem.noSetpoint();
+            pivotSubsystem.noSetpoint();
         }
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
-        //pivotSubsystem.noSetpoint();
+        pivotSubsystem.noSetpoint();
         elevatorSubsystem.stopMotors();
     }
     

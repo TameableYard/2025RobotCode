@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.combinations.HumanPlayerStationCommand;
 import frc.robot.commands.combinations.L1Command;
 import frc.robot.commands.combinations.L2Command;
 import frc.robot.commands.combinations.L3Command;
@@ -31,6 +32,7 @@ import frc.robot.commands.mechanisms.pivot.PivotTestCommand;
 import frc.robot.commands.mechanisms.pivot.Pivot40Command;
 import frc.robot.commands.mechanisms.pivot.PivotDataCommand;
 import frc.robot.commands.mechanisms.pivot.shooter.ShooterInitCommand;
+import frc.robot.commands.mechanisms.pivot.shooter.ShooterIntakeCommand;
 import frc.robot.commands.mechanisms.pivot.shooter.ShooterTestCommand;
 //import frc.robot.subsystems.mechanisms.ElevatorSubsystem.runSysIdRoutine;
 import frc.robot.commands.swerve.FieldOrientedDrive;
@@ -54,17 +56,17 @@ public class RobotContainer {
 
   private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
-  private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
+  //private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
-  private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem);
+  //private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem);
 
   private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   //private final ShooterInitCommand shooterInitCommand = new ShooterInitCommand(shooterSubsystem);
   
-  private final ShooterTestCommand shooterTestCommand = new ShooterTestCommand(shooterSubsystem);
+  //private final ShooterTestCommand shooterTestCommand = new ShooterTestCommand(shooterSubsystem);
 
   //private final runSysIdRoutine runsysidroutine = new runSysIdRoutine(elevatorSubsystem);
 
@@ -72,7 +74,7 @@ public class RobotContainer {
 
   private final PivotDataCommand pivotDataCommand = new PivotDataCommand(pivotSubsystem);
 
-  private final Pivot40Command pivot40Command = new Pivot40Command(pivotSubsystem);
+  //private final Pivot40Command pivot40Command = new Pivot40Command(pivotSubsystem);
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -125,10 +127,14 @@ public class RobotContainer {
 
     //driverXbox.y().whileTrue(shooterTestCommand);
 
-    driverXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
-    driverXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
-    driverXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
-    driverXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.leftTrigger().whileTrue(new HumanPlayerStationCommand(elevatorSubsystem, pivotSubsystem));
+    
+    driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
+    
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
     FieldOrientedDrive fieldOrientedDrive = new FieldOrientedDrive(drivebase, 
