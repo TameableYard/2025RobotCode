@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.mechanisms.ClimberSubsystem;
 import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
 import frc.robot.subsystems.mechanisms.PivotSubsystem;
 import frc.robot.subsystems.mechanisms.ShooterSubsystem;
@@ -16,7 +17,11 @@ import swervelib.SwerveInputStream;
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,6 +31,9 @@ import frc.robot.commands.combinations.L1Command;
 import frc.robot.commands.combinations.L2Command;
 import frc.robot.commands.combinations.L3Command;
 import frc.robot.commands.combinations.L4Command;
+import frc.robot.commands.mechanisms.climber.climberInitCommand;
+import frc.robot.commands.mechanisms.climber.ClimberInCommand;
+import frc.robot.commands.mechanisms.climber.ClimberOutCommand;
 import frc.robot.commands.mechanisms.elevator.ElevatorDataCommand;
 import frc.robot.commands.mechanisms.elevator.ElevatorTestCommand;
 import frc.robot.commands.mechanisms.pivot.PivotTestCommand;
@@ -37,6 +45,8 @@ import frc.robot.commands.mechanisms.pivot.shooter.ShooterTestCommand;
 //import frc.robot.subsystems.mechanisms.ElevatorSubsystem.runSysIdRoutine;
 import frc.robot.commands.swerve.FieldOrientedDrive;
 import frc.robot.commands.swerve.FieldOrientedPOVDrive;
+
+import frc.robot.commands.mechanisms.climber.ClimberOutCommand;
  
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -54,15 +64,23 @@ public class RobotContainer {
   private final CommandXboxController operatorXbox =
     new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
-  private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
+ // private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
   //private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
 
-  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  //private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   //private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem);
 
-  private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+  //private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+
+  private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+
+  private final ClimberOutCommand climberOutCommand = new ClimberOutCommand(climberSubsystem);
+
+  private final ClimberInCommand climberInCommand = new ClimberInCommand(climberSubsystem);
+
+  //private final climberInitCommand climberInitCommand = new climberInitCommand(climberSubsystem);
 
   //private final ShooterInitCommand shooterInitCommand = new ShooterInitCommand(shooterSubsystem);
   
@@ -70,9 +88,9 @@ public class RobotContainer {
 
   //private final runSysIdRoutine runsysidroutine = new runSysIdRoutine(elevatorSubsystem);
 
-  private final ElevatorDataCommand elevatorDataCommand = new ElevatorDataCommand(elevatorSubsystem);
+  //private final ElevatorDataCommand elevatorDataCommand = new ElevatorDataCommand(elevatorSubsystem);
 
-  private final PivotDataCommand pivotDataCommand = new PivotDataCommand(pivotSubsystem);
+  //private final PivotDataCommand pivotDataCommand = new PivotDataCommand(pivotSubsystem);
 
   //private final Pivot40Command pivot40Command = new Pivot40Command(pivotSubsystem);
 
@@ -98,11 +116,15 @@ public class RobotContainer {
                                                            .headingWhile(true);
 
 
+  //private final SendableChooser<Command> autoChooser;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
 
+    //autoChooser = AutoBuilder.buildAutoChooser(); //default auto will be Commands.none();
+    //SmartDashboard.putData("Auto Chooser", autoChooser);
     
     //pivotSubsystem.setDefaultCommand(pivotTestCommand);
     
@@ -127,13 +149,16 @@ public class RobotContainer {
 
     //driverXbox.y().whileTrue(shooterTestCommand);
 
-    operatorXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
-    operatorXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
-    operatorXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
-    operatorXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
-    operatorXbox.leftTrigger().whileTrue(new HumanPlayerStationCommand(elevatorSubsystem, pivotSubsystem));
+    //operatorXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
+    //operatorXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
+    //operatorXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
+    //operatorXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
+    //operatorXbox.leftTrigger().whileTrue(new HumanPlayerStationCommand(elevatorSubsystem, pivotSubsystem));
+
+    driverXbox.leftBumper().whileTrue(new ClimberInCommand(climberSubsystem));
+    driverXbox.rightBumper().whileTrue(new ClimberOutCommand(climberSubsystem));
     
-    driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
+    //driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
     
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
@@ -157,9 +182,9 @@ public class RobotContainer {
 
     driverXbox.start().onTrue((new InstantCommand(drivebase::zeroGyro)));
 
-    elevatorSubsystem.setDefaultCommand(elevatorDataCommand);
+    //elevatorSubsystem.setDefaultCommand(elevatorDataCommand);
 
-    pivotSubsystem.setDefaultCommand(pivotDataCommand);
+    //pivotSubsystem.setDefaultCommand(pivotDataCommand);
 
     //driverXbox.povUp().or(driverXbox.povUpRight().or(driverXbox.povRight().or(driverXbox.povDownRight().or(driverXbox.povDown().or(driverXbox.povDownLeft().or(driverXbox.povLeft().or(driverXbox.povUpLeft()))))))).whileTrue(fieldOrientedPOVDrive);
 
@@ -178,8 +203,12 @@ public class RobotContainer {
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
-  public Command shooterInitCommand() {
-    return new ShooterInitCommand(shooterSubsystem);
+  //public Command shooterInitCommand() {
+    //return new ShooterInitCommand(shooterSubsystem);
+  //}
+
+  public Command climberInitCommand() {
+    return new climberInitCommand(climberSubsystem);
   }
 
   /**
@@ -189,6 +218,6 @@ public class RobotContainer {
    */
   //public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return Autos.exampleAuto(m_exampleSubsystem);
+    //return autoChooser.getSelected();
   //}
 }
