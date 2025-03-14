@@ -40,7 +40,7 @@ public final class Constants {
 
   public static class SwerveConstants {
     public static final double MAX_SPEED = Units.feetToMeters(14.5);
-    public static final double ROBOT_MASS = Units.lbsToKilograms(47);
+    public static final double ROBOT_MASS = Units.lbsToKilograms(125);
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(3.35)), ROBOT_MASS);
     public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
     
@@ -85,12 +85,12 @@ public final class Constants {
     public static boolean pivotMotorInverted = false;
 
     public static final double kVerticalRot = 0.51; //0.48 formerly before chain tightening
-    public static final double kStowRot = 0.07;
+    public static final double kStowRot = 0.81;//0.07;
     public static final double kOutRot = 0.55; //TODO: get value
     public static final double kInRot = 0.55; //TODO: get value
-    public static final double kClimbRot = 0.16;
-    public static final double kScoreRot = 0.33;
-    public static final double kHumanPlayerStationRot = 0.104;//0.55;
+    public static final double kClimbRot = 0.44;//0.16;
+    public static final double kScoreRot = 0.608;//0.33;
+    public static final double kHumanPlayerStationRot = 0.36;//0.104;//0.36;//0.104;//0.55;
 
     
   }
@@ -124,7 +124,7 @@ public final class Constants {
 
     public static double kElevatorRampRate = 0.1;
     public static int    kElevatorCurrentLimit = 40;
-    public static double kMaxVelocity = Meters.of(0.5).per(Second).in(MetersPerSecond); //2.5 //0.5
+    public static double kMaxVelocity = Meters.of(0.75).per(Second).in(MetersPerSecond); //2.5 //0.5
     public static double kMaxAcceleration = Meters.of(1.5).per(Second).per(Second).in(MetersPerSecondPerSecond); //2
 
     public static double kL1Height = 0.45;
@@ -156,11 +156,11 @@ public final class Constants {
     public static int kBigSpunUpRPM = 5500;
     public static int kSmallSpunUpRPM = 5500;
 
-    public static int kBigIntakeSpeed = 250;
-    public static int kSmallIntakeSpeed = 250;
+    public static int kBigIntakeSpeed = 375;
+    public static int kSmallIntakeSpeed = 375;
 
     public static int kBigL1Speed = 250;
-    public static int kSmallL1Speed = 250;
+    public static int kSmallL1Speed = 375;
 
     public static int kBigL24Speed = 250;
     public static int kSmallL24Speed = 250;

@@ -46,7 +46,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private Pose2d startingPose;
 
-    private final boolean useVision = false; //change once limelight is on production bot
+    private final boolean useVision = false; //TODO: change once limelight is on production bot
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -69,7 +69,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
         try {
-            swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED);
+            swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED, startingPose);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
