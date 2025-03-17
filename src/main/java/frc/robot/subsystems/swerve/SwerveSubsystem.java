@@ -46,6 +46,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private boolean blueAlliance;
 
+    private RobotConfig config;
+
     private Pose2d startingPose;
 
     private final boolean useVision = false; //TODO: change once limelight is on production bot
@@ -98,6 +100,15 @@ public class SwerveSubsystem extends SubsystemBase {
             swerveDrive.stopOdometryThread();
         }
         //setupPathPlanner();
+
+        
+        /*try {
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    setupPathPlanner();*/
     }
 
     public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
@@ -127,12 +138,14 @@ public class SwerveSubsystem extends SubsystemBase {
         
     }
 
-public void setupPathPlanner() {
+
+
+/*public void setupPathPlanner() {
     //load the RobotConfig from the GUI settings
     //TODO: store in Constants file
-    RobotConfig config;
-    try {
-        config = RobotConfig.fromGUISettings();
+    //RobotConfig config;
+    //try {
+        //config = RobotConfig.fromGUISettings();
 
         final boolean enableFeedforward = true;
         //configure autobuilder last
@@ -141,7 +154,7 @@ public void setupPathPlanner() {
             this::resetOdometry,
             this::getRobotVelocity,
             (speedsRobotRelative, moduleFeedForwards) -> {
-                if (enableFeedforward) {
+                /*if (enableFeedforward) {
                     swerveDrive.drive(
                         speedsRobotRelative,
                         swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
@@ -149,7 +162,7 @@ public void setupPathPlanner() {
                     );
                 } else {
                     swerveDrive.setChassisSpeeds(speedsRobotRelative);
-                }
+               // }
             },
                 new PPHolonomicDriveController(
                     new PIDConstants(5.0, 0.0, 0.0),
@@ -165,19 +178,23 @@ public void setupPathPlanner() {
                 },
                 this
         );
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+           // } catch (Exception e) {
+             //   e.printStackTrace();
+            //}
 
-            PathfindingCommand.warmupCommand().schedule();
+            //PathfindingCommand.warmupCommand().schedule();
     
-}
+} */
 
   public Command getAutonomousCommand(String pathName)
   {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return new PathPlannerAuto(pathName);
+    //swerveDrive.drive();
+    
   }
+
+//  public Command runBackCommand()
 
     
 

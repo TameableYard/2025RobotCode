@@ -80,11 +80,11 @@ private double offset = 0;
   }
 
   public void climberIn() {
-    climberMotor.set(-0.3);
+    climberMotor.set(-0.6);
   }
 
   public void climberOut() {
-    climberMotor.set(0.3);
+    climberMotor.set(0.6);
   }
   
     

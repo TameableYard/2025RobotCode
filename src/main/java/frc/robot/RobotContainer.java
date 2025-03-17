@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -115,16 +116,23 @@ public class RobotContainer {
                                                                                              () -> driverXbox.getRightY())
                                                            .headingWhile(true);
 
+  SwerveInputStream driveSimpleAuto = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                            () -> -0.4,
+                                                            () -> 0).allianceRelativeControl(false);
+                                                            
 
-  //private final SendableChooser<Command> autoChooser;
+
+  // private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    //NamedCommands.registerCommand("", climberInCommand);
     // Configure the trigger bindings
     configureBindings();
 
-    //autoChooser = AutoBuilder.buildAutoChooser(); //default auto will be Commands.none();
-    //SmartDashboard.putData("Auto Chooser", autoChooser);
+    // autoChooser = AutoBuilder.buildAutoChooser(); //default auto will be Commands.none();
+    // SmartDashboard.putData("Auto Chooser", autoChooser);
     
     //pivotSubsystem.setDefaultCommand(pivotTestCommand);
     
@@ -142,6 +150,7 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+
   private void configureBindings() {
     //driverXbox.b().whileTrue(elevatorTestCommand);
 
@@ -216,8 +225,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  //public Command getAutonomousCommand() {
+  public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return autoChooser.getSelected();
-  //}
+    return new FieldOrientedDrive(drivebase, driveSimpleAuto);
+  }
 }
