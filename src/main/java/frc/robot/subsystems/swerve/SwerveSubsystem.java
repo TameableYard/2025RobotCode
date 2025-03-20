@@ -68,6 +68,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     LimelightPoseEstimator limelightPoseEstimator;
 
+    Optional<PoseEstimate> poseEstimates;
+
     private final boolean useVision = true; //TODO: change once limelight is on production bot
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
@@ -327,9 +329,20 @@ public void updatePoseEstimation() {
              
              .save();
 
-    Optional<PoseEstimate> poseEstimates = limelightPoseEstimator.getPoseEstimate();
+    poseEstimates = limelightPoseEstimator.getPoseEstimate();
     Optional<LimelightResults> results = limelight.getLatestResults();
 
+    poseEstimates.ifPresent((PoseEstimate poseEstimate) -> {
+        if (poseEstimates.get().tagCount > 0) {
+            // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
+            if (Math.abs(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
+                //poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999)); no stddevs as for some reason yall does not (seemingly) support setting stddevs for vision measurements yet
+                swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
+                swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
+            }
+        }
+    });
+/*
     if (results.isPresent()) {
         LimelightResults result = results.get();
         PoseEstimate poseEstimate = poseEstimates.get();
@@ -355,7 +368,7 @@ public void updatePoseEstimation() {
                 swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
                 swerveDrive.addVisionMeasurement(blueSidePose, Timer.getTimestamp());
             }
-            /*if (distanceToPose < 0.5 || (outOfAreaReading > 10) || (outOfAreaReading > 10 && !initialReading)) {
+            if (distanceToPose < 0.5 || (outOfAreaReading > 10) || (outOfAreaReading > 10 && !initialReading)) {
                 if (!initialReading) {
                     initialReading = true;
                 }
@@ -364,10 +377,10 @@ public void updatePoseEstimation() {
                 swerveDrive.addVisionMeasurement(blueSidePose, Timer.getTimestamp());
             } else {
                 outOfAreaReading += 1;
-            }*/
+            }
         
         }
-    }
+    }*/
     swerveDrive.updateOdometry();
     
 }
