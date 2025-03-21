@@ -65,15 +65,15 @@ public class RobotContainer {
   private final CommandXboxController operatorXbox =
     new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
- // private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
+  private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
   //private final PivotTestCommand pivotTestCommand = new PivotTestCommand(pivotSubsystem);
 
-  //private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   //private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem);
 
-  //private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+  private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
@@ -89,9 +89,9 @@ public class RobotContainer {
 
   //private final runSysIdRoutine runsysidroutine = new runSysIdRoutine(elevatorSubsystem);
 
-  //private final ElevatorDataCommand elevatorDataCommand = new ElevatorDataCommand(elevatorSubsystem);
+  private final ElevatorDataCommand elevatorDataCommand = new ElevatorDataCommand(elevatorSubsystem);
 
-  //private final PivotDataCommand pivotDataCommand = new PivotDataCommand(pivotSubsystem);
+  private final PivotDataCommand pivotDataCommand = new PivotDataCommand(pivotSubsystem);
 
   //private final Pivot40Command pivot40Command = new Pivot40Command(pivotSubsystem);
 
@@ -158,16 +158,16 @@ public class RobotContainer {
 
     //driverXbox.y().whileTrue(shooterTestCommand);
 
-    //operatorXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
-    //operatorXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
-    //operatorXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
-    //operatorXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
-    //operatorXbox.leftTrigger().whileTrue(new HumanPlayerStationCommand(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.a().whileTrue(new L3Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.b().whileTrue(new L4Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.y().whileTrue(new L1Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.x().whileTrue(new L2Command(elevatorSubsystem, pivotSubsystem));
+    operatorXbox.leftTrigger().whileTrue(new HumanPlayerStationCommand(elevatorSubsystem, pivotSubsystem));
 
     driverXbox.leftBumper().whileTrue(new ClimberInCommand(climberSubsystem));
     driverXbox.rightBumper().whileTrue(new ClimberOutCommand(climberSubsystem));
     
-    //driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
+    driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
     
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
@@ -191,9 +191,9 @@ public class RobotContainer {
 
     driverXbox.start().onTrue((new InstantCommand(drivebase::zeroGyro)));
 
-    //elevatorSubsystem.setDefaultCommand(elevatorDataCommand);
+    elevatorSubsystem.setDefaultCommand(elevatorDataCommand);
 
-    //pivotSubsystem.setDefaultCommand(pivotDataCommand);
+    pivotSubsystem.setDefaultCommand(pivotDataCommand);
 
     //driverXbox.povUp().or(driverXbox.povUpRight().or(driverXbox.povRight().or(driverXbox.povDownRight().or(driverXbox.povDown().or(driverXbox.povDownLeft().or(driverXbox.povLeft().or(driverXbox.povUpLeft()))))))).whileTrue(fieldOrientedPOVDrive);
 
@@ -212,9 +212,9 @@ public class RobotContainer {
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
-  //public Command shooterInitCommand() {
-    //return new ShooterInitCommand(shooterSubsystem);
-  //}
+  public Command shooterInitCommand() {
+    return new ShooterInitCommand(shooterSubsystem);
+  }
 
   public Command climberInitCommand() {
     return new climberInitCommand(climberSubsystem);

@@ -42,7 +42,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final RelativeEncoder motorEncoder = climberMotor.getEncoder();
 
-  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(2, 1, 0.935);//0.402 for 0 to be right as in unit circle
+  private final DutyCycleEncoder throughboreEncoder = new DutyCycleEncoder(5, 1, 0.935);//0.402 for 0 to be right as in unit circle
   
   
 private double offset = 0;

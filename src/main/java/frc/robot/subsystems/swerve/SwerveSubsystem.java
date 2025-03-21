@@ -52,6 +52,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.Sendable;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
@@ -70,7 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     Optional<PoseEstimate> poseEstimates;
 
-    private final boolean useVision = true; //TODO: change once limelight is on production bot
+    private final boolean useVision = false; //TODO: change once limelight is on production bot
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -118,9 +119,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if (useVision) {
             limelightSetup();
-            //setupVision();
             //stop odometry thread when using vision so updates can be synchronized better
             swerveDrive.stopOdometryThread();
+
+
+            
         }
         //setupPathPlanner();
 
@@ -140,13 +143,6 @@ public class SwerveSubsystem extends SubsystemBase {
          */
         swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, startingPose);//new Pose2d(new Translation2d(Meter.of(16.38), Meter.of(6.03)), Rotation2d.fromDegrees(0)));
     }
-
-    //public void setupVision() {
-        //add the vision shtuff here later
-        //vision = new Vision(swerveDrive);
-    //}
-
-    //TODO: add publishing of pose for advantagescope visualization, per https://docs.advantagescope.org/tab-reference/3d-field
 
     private int outOfAreaReading = 0;
     private boolean initialReading = false;
@@ -336,7 +332,8 @@ public void updatePoseEstimation() {
         if (poseEstimates.get().tagCount > 0) {
             // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
             if (Math.abs(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
-                //poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999)); no stddevs as for some reason yall does not (seemingly) support setting stddevs for vision measurements yet
+                
+                //SmartDashboard.putData("visionpose", (Sendable) poseEstimate.pose.toPose2d());
                 swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
                 swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
             }

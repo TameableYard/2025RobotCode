@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 
     CameraServer.startAutomaticCapture();
 
-    //m_robotContainer.shooterInitCommand().schedule();
+    m_robotContainer.shooterInitCommand().schedule();
 
     m_robotContainer.climberInitCommand().schedule();
   }
