@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase{
     private final AddressableLED m_led = new AddressableLED(9);
-    private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(60);
+    private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(30);
     private final LEDPattern m_test = LEDPattern.rainbow(255, 128);
     private final Distance kLEDSpacing = Meters.of(1/62.5);
     private final LEDPattern rainbowPattern = m_test.scrollAtAbsoluteSpeed(MetersPerSecond.of(0.25), kLEDSpacing);
