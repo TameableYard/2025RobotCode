@@ -5,18 +5,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
-import frc.robot.subsystems.mechanisms.PivotSubsystem;
 
 public class HumanPlayerStationCommand extends Command {
 
     //private ShuffleboardTab pivotTab = Shuffleboard.getTab("Pivot");
 
     private final ElevatorSubsystem elevatorSubsystem;
-    private final PivotSubsystem pivotSubsystem;
-    public HumanPlayerStationCommand(ElevatorSubsystem eSubsystem, PivotSubsystem pSubsystem) {
+    public HumanPlayerStationCommand(ElevatorSubsystem eSubsystem) {
         elevatorSubsystem = eSubsystem;
-        pivotSubsystem = pSubsystem;
-        addRequirements(elevatorSubsystem, pivotSubsystem);
+        addRequirements(elevatorSubsystem);
     }
 
     @Override
@@ -30,10 +27,6 @@ public class HumanPlayerStationCommand extends Command {
         
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
-
-        SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
-        SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
-        SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
         
         elevatorSubsystem.reachGoal(ElevatorConstants.kHumanPlayerStation);
         
@@ -53,18 +46,8 @@ public class HumanPlayerStationCommand extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
-        SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
-        SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
-
         elevatorSubsystem.reachGoal(ElevatorConstants.kHumanPlayerStation);
 
-
-        if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight) {
-            pivotSubsystem.reachSetpoint(PivotConstants.kHumanPlayerStationRot);
-        } else {
-            pivotSubsystem.noSetpoint();
-        }
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  

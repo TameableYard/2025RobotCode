@@ -5,18 +5,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
-import frc.robot.subsystems.mechanisms.PivotSubsystem;
 
 public class L4Command extends Command {
 
     //private ShuffleboardTab pivotTab = Shuffleboard.getTab("Pivot");
 
     private final ElevatorSubsystem elevatorSubsystem;
-    private final PivotSubsystem pivotSubsystem;
-    public L4Command(ElevatorSubsystem eSubsystem, PivotSubsystem pSubsystem) {
+    public L4Command(ElevatorSubsystem eSubsystem) {
         elevatorSubsystem = eSubsystem;
-        pivotSubsystem = pSubsystem;
-        addRequirements(elevatorSubsystem, pivotSubsystem);
+        addRequirements(elevatorSubsystem);
     }
 
     @Override
@@ -31,13 +28,7 @@ public class L4Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
-        SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
-        SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
-        
         elevatorSubsystem.reachGoal(ElevatorConstants.kL4Height);
-        pivotSubsystem.synchronizeEncoders();
-
         
     }
 
@@ -53,30 +44,17 @@ public class L4Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        SmartDashboard.putNumber("throughborePos: ", pivotSubsystem.getThroughborePos());
-        SmartDashboard.putNumber("motor pos: ", pivotSubsystem.getMotorPos());
-        SmartDashboard.putNumber("throughborePosRads: ", pivotSubsystem.getThroughborePosRadians());
-
-
         if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kL4Height) {
             elevatorSubsystem.reachGoal(ElevatorConstants.kL4Height);
         } else {
             elevatorSubsystem.stopMotors();
         }
 
-
-        if (elevatorSubsystem.getHeightMeters() > ElevatorConstants.kSafetyHeight) {
-            pivotSubsystem.reachSetpoint(PivotConstants.kScoreRot);
-        } else {
-            pivotSubsystem.noSetpoint();
-        }
-        pivotSubsystem.synchronizeEncoders();
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
-        pivotSubsystem.noSetpoint();
         elevatorSubsystem.stopMotors();
     }
     
