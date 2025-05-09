@@ -3,7 +3,6 @@ package frc.robot.commands.combinations;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
 
 public class L4Command extends Command {

@@ -2,7 +2,6 @@ package frc.robot.commands.mechanisms.elevator;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
 
 public class ElevatorTestCommand extends Command {

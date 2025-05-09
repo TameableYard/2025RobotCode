@@ -10,15 +10,13 @@ import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj.util.Color.RGBChannel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase{
     private final Color titansRed = new Color(255, 1, 2);// 192 35 50     192 35 2
     private final Color titansDark = new Color(255, 0, 1);
-    private final Color Black = new Color().kBlack;
-    private final Color White = new Color().kWhite;
+    private final Color Black = Color.kBlack;
+    private final Color White = Color.kWhite;
     private final Color titansLight = new Color(255, 2, 3);
     private final AddressableLED m_led = new AddressableLED(9);
     private final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(32);

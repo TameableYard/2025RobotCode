@@ -108,7 +108,7 @@ public final class Constants {
     public static final double kElevatorkA = 0.09;//173; // volt per acceleration (V/(m/s²)) nh
     public static final double kElevatorkG = 0.91274; // volts (V)
 
-    public static final double kElevatorGearing    = 8.45/3; // was 2
+    public static final double kElevatorGearing    = 6.88/3;//8.45/3; // was 2
 
     public static final double kElevatorSprocketTeeth = 22;
     public static final double kElevatorPitch = Units.inchesToMeters(0.25);
