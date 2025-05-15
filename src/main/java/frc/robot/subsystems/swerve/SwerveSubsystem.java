@@ -81,7 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
     StructPublisher<Pose2d> visionpublisher = NetworkTableInstance.getDefault().getStructTopic("vision pose", Pose2d.struct).publish();
 
     public SwerveSubsystem(File directory) {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) { //TODO: add exception handling for no alliance found
+        if (DriverStation.getAlliance().orElse(null) == DriverStation.Alliance.Red) { //TODO: add exception handling for no alliance found
             blueAlliance = false;
         } else {
             blueAlliance = true;
