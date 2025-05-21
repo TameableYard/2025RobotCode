@@ -122,7 +122,7 @@ public class RobotContainer {
                                                             
 
 
-  // private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -131,8 +131,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    // autoChooser = AutoBuilder.buildAutoChooser(); //default auto will be Commands.none();
-    // SmartDashboard.putData("Auto Chooser", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser(); //default auto will be Commands.none();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
     
     //pivotSubsystem.setDefaultCommand(pivotTestCommand);
     
@@ -227,6 +227,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new FieldOrientedDrive(drivebase, driveSimpleAuto);
+    //return new FieldOrientedDrive(drivebase, driveSimpleAuto);
+    return autoChooser.getSelected();
   }
 }

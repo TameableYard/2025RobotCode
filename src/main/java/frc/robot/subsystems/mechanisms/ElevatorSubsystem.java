@@ -248,7 +248,7 @@ public class ElevatorSubsystem extends SubsystemBase
   }
 
   /**
-   * Get the height in meters using the seconday encoder.
+   * Get the height in meters using the secondary encoder.
    *
    * @return Height in meters
    */

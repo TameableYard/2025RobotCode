@@ -71,7 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     Optional<PoseEstimate> poseEstimates;
 
-    private final boolean useVision = false; //TODO: change once limelight is on production bot
+    private final boolean useVision = false; //TODO: change once limelight is reattached
     
     private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
@@ -125,7 +125,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
             
         }
-        //setupPathPlanner();
+        setupPathPlanner();
 
         
         /*try {
@@ -165,12 +165,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
 
-/*public void setupPathPlanner() {
+public void setupPathPlanner() {
     //load the RobotConfig from the GUI settings
     //TODO: store in Constants file
-    //RobotConfig config;
-    //try {
-        //config = RobotConfig.fromGUISettings();
+    RobotConfig config;
+    try {
+        config = RobotConfig.fromGUISettings();
 
         final boolean enableFeedforward = true;
         //configure autobuilder last
@@ -179,7 +179,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this::resetOdometry,
             this::getRobotVelocity,
             (speedsRobotRelative, moduleFeedForwards) -> {
-                /*if (enableFeedforward) {
+                if (enableFeedforward) {
                     swerveDrive.drive(
                         speedsRobotRelative,
                         swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
@@ -187,7 +187,7 @@ public class SwerveSubsystem extends SubsystemBase {
                     );
                 } else {
                     swerveDrive.setChassisSpeeds(speedsRobotRelative);
-               // }
+                }
             },
                 new PPHolonomicDriveController(
                     new PIDConstants(5.0, 0.0, 0.0),
@@ -203,13 +203,13 @@ public class SwerveSubsystem extends SubsystemBase {
                 },
                 this
         );
-           // } catch (Exception e) {
-             //   e.printStackTrace();
-            //}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            //PathfindingCommand.warmupCommand().schedule();
+            PathfindingCommand.warmupCommand().schedule();
     
-} */
+} 
 
   public Command getAutonomousCommand(String pathName)
   {
