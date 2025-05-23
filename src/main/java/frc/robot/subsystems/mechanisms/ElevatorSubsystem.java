@@ -47,9 +47,9 @@ public class ElevatorSubsystem extends SubsystemBase
 {
 
   public final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMinElevatorHeight,
-                                                                            Inches.of(5)));
+                                                                            Inches.of(10)));
   public final Trigger atMax = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMaxElevatorHeight,
-                                                                            Inches.of(5)));
+                                                                            Inches.of(10)));
 
 
   // This gearbox represents a gearbox containing 1 Neo
@@ -95,7 +95,7 @@ public class ElevatorSubsystem extends SubsystemBase
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
           new SysIdRoutine.Config(Volts.per(Second).of(0.25),
-                                  Volts.of(3),
+                                  Volts.of(5),
                                   Seconds.of(10)),
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motor(s).
@@ -168,7 +168,7 @@ public class ElevatorSubsystem extends SubsystemBase
     double voltsOut = MathUtil.clamp(
         m_controller.calculate(getHeightMeters(), goal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
-                                              m_controller.getSetpoint().velocity), -12, 12);
+                                              m_controller.getSetpoint().velocity), -10, 10);
     m_BackMotor.setVoltage(voltsOut);
 
     SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), goal));
@@ -187,7 +187,7 @@ public class ElevatorSubsystem extends SubsystemBase
     double voltsOut = MathUtil.clamp(
         m_controller.calculate(getHeightMeters(), fakeGoal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
-                                              m_controller.getSetpoint().velocity), -12, 12);
+                                              m_controller.getSetpoint().velocity), -10, 10);
     SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), fakeGoal));
     SmartDashboard.putNumber("elevatorFeedforwardVoltage: ", (m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
     m_controller.getSetpoint().velocity)));
@@ -207,7 +207,7 @@ public class ElevatorSubsystem extends SubsystemBase
   }
 
   /**
-   * Runs the SysId routine to tune the Arm
+   * Runs the SysId routine to tune the Elevator
    *
    * @return SysId Routine command
    */
@@ -249,7 +249,7 @@ public class ElevatorSubsystem extends SubsystemBase
   public double getHeightMeters()
   {
     return (m_BackEncoder.getPosition() / ElevatorConstants.kElevatorGearing) *
-           (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius);
+           (2 * Math.PI * ElevatorConstants.kElevatorLowerDrumRadius);
   }
 
   /**
@@ -260,7 +260,7 @@ public class ElevatorSubsystem extends SubsystemBase
   public double getHeightMetersFrontEncoder()
   {
     return (m_FrontEncoder.getPosition() / ElevatorConstants.kElevatorGearing) *
-           (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius);
+           (2 * Math.PI * ElevatorConstants.kElevatorLowerDrumRadius); //TODO: change
   }
 
   /**
@@ -271,7 +271,7 @@ public class ElevatorSubsystem extends SubsystemBase
   public double getVelocityMetersPerSecond()
   {
     return ((m_BackEncoder.getVelocity() / 60)/ ElevatorConstants.kElevatorGearing) *
-           (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius);
+           (2 * Math.PI * ElevatorConstants.kElevatorLowerDrumRadius); //TODO: change
   }
 
   /**
@@ -307,7 +307,7 @@ public class ElevatorSubsystem extends SubsystemBase
      */
     public static Distance convertRotationsToDistance(Angle rotations) {
       return Meters.of((rotations.in(Rotations) / ElevatorConstants.kElevatorGearing) *
-                       (ElevatorConstants.kElevatorDrumRadius * 2 * Math.PI));
+                       (ElevatorConstants.kElevatorLowerDrumRadius * 2 * Math.PI)); //TODO: change
     }
 
 /**
@@ -319,7 +319,7 @@ public class ElevatorSubsystem extends SubsystemBase
     public static Angle convertDistanceToRotations(Distance distance)
     {
       return Rotations.of(distance.in(Meters) /
-                          (ElevatorConstants.kElevatorDrumRadius * 2 * Math.PI) *
+                          (ElevatorConstants.kElevatorLowerDrumRadius * 2 * Math.PI) * //TODO: change
                           ElevatorConstants.kElevatorGearing);
     }
 

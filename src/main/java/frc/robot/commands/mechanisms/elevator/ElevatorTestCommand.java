@@ -43,6 +43,9 @@ public class ElevatorTestCommand extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
+        SmartDashboard.putBoolean("Top Trigger", elevatorSubsystem.atMax.getAsBoolean());
+        SmartDashboard.putBoolean("Bottom Trigger", elevatorSubsystem.atMin.getAsBoolean());
+
         elevatorSubsystem.reachGoal(1);
 
 

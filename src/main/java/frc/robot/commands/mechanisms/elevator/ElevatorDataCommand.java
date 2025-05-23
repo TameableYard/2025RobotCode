@@ -36,6 +36,8 @@ public class ElevatorDataCommand extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
+        SmartDashboard.putBoolean("Top Trigger", elevatorSubsystem.atMax.getAsBoolean());
+        SmartDashboard.putBoolean("Bottom Trigger", elevatorSubsystem.atMin.getAsBoolean());
     }
  
     @Override

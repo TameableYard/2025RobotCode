@@ -71,7 +71,7 @@ public class RobotContainer {
 
   private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
-  private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem);
+  private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem); 
 
   //private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
@@ -153,6 +153,8 @@ public class RobotContainer {
 
   private void configureBindings() {
     driverXbox.b().whileTrue(elevatorTestCommand);
+
+    driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
     //driverXbox.a().whileTrue(pivot40Command);//pivotTestCommand);
 
