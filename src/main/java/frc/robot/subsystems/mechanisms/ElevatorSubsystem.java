@@ -94,8 +94,8 @@ public class ElevatorSubsystem extends SubsystemBase
   private final SysIdRoutine      m_sysIdRoutine   =
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-          new SysIdRoutine.Config(Volts.per(Second).of(1),
-                                  Volts.of(7),
+          new SysIdRoutine.Config(Volts.per(Second).of(0.25),
+                                  Volts.of(3),
                                   Seconds.of(10)),
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motor(s).
@@ -123,7 +123,7 @@ public class ElevatorSubsystem extends SubsystemBase
     SparkMaxConfig config = new SparkMaxConfig();
     SparkMaxConfig frontFollowerConfig = new SparkMaxConfig();
     config
-        .inverted(true)
+        .inverted(false)
         .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit)
         .closedLoopRampRate(ElevatorConstants.kElevatorRampRate)
         .closedLoop
@@ -166,10 +166,15 @@ public class ElevatorSubsystem extends SubsystemBase
   public void reachGoal(double goal)
   {
     double voltsOut = MathUtil.clamp(
-        m_controller.calculate(getHeightMeters(), goal)/* +
+        m_controller.calculate(getHeightMeters(), goal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
-                                              m_controller.getSetpoint().velocity)*/, -7, 7);
+                                              m_controller.getSetpoint().velocity), -12, 12);
     m_BackMotor.setVoltage(voltsOut);
+
+    SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), goal));
+    SmartDashboard.putNumber("elevatorFeedforwardVoltage: ", (m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
+    m_controller.getSetpoint().velocity)));
+    SmartDashboard.putNumber("elevatorTotalVoltage: ", voltsOut);
   }
 
   /**
@@ -182,7 +187,7 @@ public class ElevatorSubsystem extends SubsystemBase
     double voltsOut = MathUtil.clamp(
         m_controller.calculate(getHeightMeters(), fakeGoal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
-                                              m_controller.getSetpoint().velocity), -7, 7);
+                                              m_controller.getSetpoint().velocity), -12, 12);
     SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), fakeGoal));
     SmartDashboard.putNumber("elevatorFeedforwardVoltage: ", (m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
     m_controller.getSetpoint().velocity)));
