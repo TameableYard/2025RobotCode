@@ -114,7 +114,7 @@ public final class Constants {
     public static final double kElevatorUpperPitch = Units.inchesToMeters(0.25);
     public static final double kElevatorUpperDrumRadius = (kElevatorUpperSprocketTeeth * kElevatorUpperPitch) / (2 * Math.PI);//Units.inchesToMeters(1.0);
     
-    public static final double kElevatorLowerSprocketTeeth = 16;
+    public static final double kElevatorLowerSprocketTeeth = 22;
     public static final double kElevatorLowerPitch = Units.inchesToMeters(0.25);
     public static final double kElevatorLowerDrumRadius = (kElevatorLowerSprocketTeeth * kElevatorLowerPitch) / (2 * Math.PI);
 
@@ -143,13 +143,15 @@ public final class Constants {
   }
 
   public static class ShooterConstants {
-    public static int kBigShooterMotorPort = 35;
-    public static int kSmallShooterMotorPort = 36;
+    public static final int kLaserCANPort = 36;
+
+    public static final int kShooterMotorPort = 35;
+
+    public static final int kSensorDistance = 115; //in mm
 
     public static double kFlywheelGearing = 4.0;
 
-    public static double kBigFlywheelMomentOfInertia = 0.00012916529; //kg * m^2
-    public static double kSmallFlywheelMomentOfInertia = 4.3228437e-5; //kg * m^2
+    public static double kFlywheelMomentOfInertia = 0.568605;//0.00012916529; //kg * m^2
 
     public static double kStateStdDevs = 3.0;
     public static double kMeasurementStdDevs = 0.01;
@@ -158,17 +160,13 @@ public final class Constants {
 
     public static double kMaxVoltage = 12.0;
 
-    public static int kBigSpunUpRPM = 5500;
-    public static int kSmallSpunUpRPM = 5500;
+    public static int kSpunUpRPM = 5500/4;
 
-    public static int kBigIntakeSpeed = 375;
-    public static int kSmallIntakeSpeed = 375;
+    public static int kIntakeSpeed = 375;
 
-    public static int kBigL1Speed = 250;
-    public static int kSmallL1Speed = 375;
+    public static int kL1Speed = 250;
 
-    public static int kBigL24Speed = 250;
-    public static int kSmallL24Speed = 250;
+    public static int kL24Speed = 250;
 
 
   }

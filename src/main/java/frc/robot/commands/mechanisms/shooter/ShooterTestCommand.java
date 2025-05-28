@@ -1,15 +1,14 @@
-package frc.robot.commands.mechanisms.pivot.shooter;
+package frc.robot.commands.mechanisms.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
 //import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.mechanisms.ShooterSubsystem;
 
-public class ShooterIntakeCommand extends Command {
+public class ShooterTestCommand extends Command {
 
     private final ShooterSubsystem m_ShooterSubsystem;
     //private final CommandXboxController operatorXbox;
-    public ShooterIntakeCommand(ShooterSubsystem subsystem/*, CommandXboxController operator*/) {
+    public ShooterTestCommand(ShooterSubsystem subsystem/*, CommandXboxController operator*/) {
         m_ShooterSubsystem = subsystem;
         //operatorXbox = operator;
         addRequirements(m_ShooterSubsystem);
@@ -17,8 +16,7 @@ public class ShooterIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        m_ShooterSubsystem.guidedBigShoot(ShooterConstants.kBigIntakeSpeed);
-        m_ShooterSubsystem.guidedSmallShoot(ShooterConstants.kSmallIntakeSpeed);
+        m_ShooterSubsystem.guidedShoot(750);
     }
 
     @Override

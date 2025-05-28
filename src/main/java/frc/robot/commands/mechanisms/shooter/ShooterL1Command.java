@@ -1,4 +1,4 @@
-package frc.robot.commands.mechanisms.pivot.shooter;
+package frc.robot.commands.mechanisms.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
@@ -17,8 +17,7 @@ public class ShooterL1Command extends Command {
 
     @Override
     public void initialize() {
-        m_ShooterSubsystem.guidedBigShoot(ShooterConstants.kBigL1Speed);
-        m_ShooterSubsystem.guidedSmallShoot(ShooterConstants.kSmallL1Speed);
+        m_ShooterSubsystem.guidedShoot(ShooterConstants.kL1Speed);
     }
 
     @Override

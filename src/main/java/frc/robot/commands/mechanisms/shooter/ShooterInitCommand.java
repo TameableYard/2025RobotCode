@@ -1,4 +1,4 @@
-package frc.robot.commands.mechanisms.pivot.shooter;
+package frc.robot.commands.mechanisms.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.mechanisms.ShooterSubsystem;
@@ -13,8 +13,7 @@ public class ShooterInitCommand extends Command {
 
     @Override
     public void initialize() {
-        m_ShooterSubsystem.initBigFlywheel();
-        m_ShooterSubsystem.initSmallFlywheel();
+        m_ShooterSubsystem.initFlywheel();
     }
 
     @Override

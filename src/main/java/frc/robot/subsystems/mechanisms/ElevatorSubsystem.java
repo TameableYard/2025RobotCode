@@ -23,7 +23,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -32,7 +31,6 @@ import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,10 +49,6 @@ public class ElevatorSubsystem extends SubsystemBase
   public final Trigger atMax = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMaxElevatorHeight,
                                                                             Inches.of(10)));
 
-
-  // This gearbox represents a gearbox containing 1 Neo
-  private final DCMotor m_elevatorGearbox = DCMotor.getNEO(1);
-
   // Standard classes for controlling our elevator
   ElevatorFeedforward m_feedforward =
       new ElevatorFeedforward(
@@ -68,9 +62,6 @@ public class ElevatorSubsystem extends SubsystemBase
   private final RelativeEncoder m_BackEncoder  = m_BackMotor.getEncoder();
 
   private final RelativeEncoder m_FrontEncoder = m_FrontMotor.getEncoder();
-
-
-  private final DigitalInput m_limitSwitchLow    = new DigitalInput(1);
 
   private final ProfiledPIDController m_controller = new ProfiledPIDController(ElevatorConstants.kElevatorKp,
                                                                                ElevatorConstants.kElevatorKi,
@@ -95,7 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
           new SysIdRoutine.Config(Volts.per(Second).of(0.25),
-                                  Volts.of(5),
+                                  Volts.of(6.5),
                                   Seconds.of(10)),
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motor(s).
@@ -214,9 +205,9 @@ public class ElevatorSubsystem extends SubsystemBase
   public Command runSysIdRoutine()
   {
     return (m_sysIdRoutine.dynamic(Direction.kForward).until(atMax))
-        .andThen(m_sysIdRoutine.dynamic(Direction.kReverse).until(atMin))
-        .andThen(m_sysIdRoutine.quasistatic(Direction.kForward).until(atMax))
-        .andThen(m_sysIdRoutine.quasistatic(Direction.kReverse).until(atMin))
+        //.andThen(m_sysIdRoutine.dynamic(Direction.kReverse).until(atMin))
+        //.andThen(m_sysIdRoutine.quasistatic(Direction.kForward).until(atMax))
+        //.andThen(m_sysIdRoutine.quasistatic(Direction.kReverse).until(atMin))
         .andThen(Commands.print("DONE"));
   }
 
