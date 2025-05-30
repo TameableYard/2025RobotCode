@@ -9,7 +9,7 @@ import frc.robot.Constants.OperatorConstants;
 //import frc.robot.subsystems.mechanisms.ClimberSubsystem;
 import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
 //import frc.robot.subsystems.mechanisms.PivotSubsystem;
-//import frc.robot.subsystems.mechanisms.ShooterSubsystem;
+import frc.robot.subsystems.mechanisms.ShooterSubsystem;
 //import frc.robot.commands.Autos;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import swervelib.SwerveInputStream;
@@ -32,16 +32,12 @@ import frc.robot.commands.combinations.L1Command;
 import frc.robot.commands.combinations.L2Command;
 import frc.robot.commands.combinations.L3Command;
 import frc.robot.commands.combinations.L4Command;
-//import frc.robot.commands.mechanisms.climber.climberInitCommand;
-//import frc.robot.commands.mechanisms.climber.ClimberInCommand;
-//import frc.robot.commands.mechanisms.climber.ClimberOutCommand;
+
 import frc.robot.commands.mechanisms.elevator.ElevatorDataCommand;
 import frc.robot.commands.mechanisms.elevator.ElevatorTestCommand;
-//import frc.robot.commands.mechanisms.pivot.PivotTestCommand;
-//import frc.robot.commands.mechanisms.pivot.Pivot40Command;
-//import frc.robot.commands.mechanisms.pivot.PivotDataCommand;
-//import frc.robot.commands.mechanisms.pivot.shooter.ShooterInitCommand;
-//import frc.robot.commands.mechanisms.pivot.shooter.ShooterIntakeCommand;
+
+import frc.robot.commands.mechanisms.shooter.ShooterInitCommand;
+import frc.robot.commands.mechanisms.shooter.ShooterIntakeCommand;
 //import frc.robot.commands.mechanisms.pivot.shooter.ShooterTestCommand;
 //import frc.robot.subsystems.mechanisms.ElevatorSubsystem.runSysIdRoutine;
 import frc.robot.commands.swerve.FieldOrientedDrive;
@@ -73,7 +69,7 @@ public class RobotContainer {
 
   private final ElevatorTestCommand elevatorTestCommand = new ElevatorTestCommand(elevatorSubsystem); 
 
-  //private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+  private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   //private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
 
@@ -83,7 +79,7 @@ public class RobotContainer {
 
   //private final climberInitCommand climberInitCommand = new climberInitCommand(climberSubsystem);
 
-  //private final ShooterInitCommand shooterInitCommand = new ShooterInitCommand(shooterSubsystem);
+  private final ShooterInitCommand shooterInitCommand = new ShooterInitCommand(shooterSubsystem);
   
   //private final ShooterTestCommand shooterTestCommand = new ShooterTestCommand(shooterSubsystem);
 
@@ -169,7 +165,7 @@ public class RobotContainer {
     //driverXbox.leftBumper().whileTrue(new ClimberInCommand(climberSubsystem));
     //driverXbox.rightBumper().whileTrue(new ClimberOutCommand(climberSubsystem));
     
-    //driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
+    driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
     
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 
@@ -214,10 +210,10 @@ public class RobotContainer {
     //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
-  /*public Command shooterInitCommand() {
+  public Command shooterInitCommand() {
     return new ShooterInitCommand(shooterSubsystem);
   }
-
+/*
   public Command climberInitCommand() {
     return new climberInitCommand(climberSubsystem);
   }*/

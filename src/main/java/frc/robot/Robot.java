@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putData(CommandScheduler.getInstance());
 
-    //m_robotContainer.shooterInitCommand().schedule();
+    m_robotContainer.shooterInitCommand().schedule();
 
     //m_robotContainer.climberInitCommand().schedule();
   }

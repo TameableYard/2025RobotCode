@@ -17,10 +17,6 @@ public class L1Command extends Command {
 
     @Override
     public void initialize() {
-        //pivotSubsystem.setGoal(PivotConstants.kAmpShootPos);
-        /*if (!pivotSubsystem.isEnabled()) {
-            pivotSubsystem.enable();
-        }*/
         SmartDashboard.putNumber("elevatorHeight: ", elevatorSubsystem.getHeightMeters());
         SmartDashboard.putNumber("elevatorHeightFrontEncoder: ", elevatorSubsystem.getHeightMetersFrontEncoder());
         
