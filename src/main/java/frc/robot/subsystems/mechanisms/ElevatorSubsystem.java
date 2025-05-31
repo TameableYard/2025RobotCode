@@ -40,14 +40,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ElevatorConstants.Heights;
 
 public class ElevatorSubsystem extends SubsystemBase
 {
 
   public final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMinElevatorHeight,
-                                                                            Inches.of(10)));
+                                                                            Inches.of(12)));
   public final Trigger atMax = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMaxElevatorHeight,
-                                                                            Inches.of(10)));
+                                                                            Inches.of(12)));
+
+  public double desiredHeight = ElevatorConstants.kBottom;
 
   // Standard classes for controlling our elevator
   ElevatorFeedforward m_feedforward =
@@ -86,7 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
           new SysIdRoutine.Config(Volts.per(Second).of(0.25),
-                                  Volts.of(6.5),
+                                  Volts.of(6),
                                   Seconds.of(10)),
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motor(s).
@@ -95,7 +98,7 @@ public class ElevatorSubsystem extends SubsystemBase
               // characterized.
               log -> {
                 // Record a frame for the shooter motor.
-                log.motor("elevator")
+                log.motor("elevator-improved")
                    .voltage(
                        m_appliedVoltage.mut_replace(
                            m_BackMotor.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
@@ -126,6 +129,7 @@ public class ElevatorSubsystem extends SubsystemBase
     frontFollowerConfig.apply(config).follow(m_BackMotor);
 
     m_FrontMotor.configure(frontFollowerConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
     // Publish Mechanism2d to SmartDashboard
     // To view the Elevator visualization, select Network Tables -> SmartDashboard -> Elevator Sim
 
@@ -329,8 +333,29 @@ public class ElevatorSubsystem extends SubsystemBase
   {
   }
 
+  public void changeDesiredHeight(Heights height) {
+    switch (height) {
+      case L1:
+        desiredHeight = ElevatorConstants.kL1Height;
+        break;
+      case L2:
+        desiredHeight = ElevatorConstants.kL2Height;
+        break;
+      case L3:
+        desiredHeight = ElevatorConstants.kL3Height;
+        break;
+      case L4:
+        desiredHeight = ElevatorConstants.kL4Height;
+        break;
+      case REST:
+        desiredHeight = ElevatorConstants.kBottom;
+        break;
+    }
+  }
+
   @Override
-  public void periodic()
-  {
+  public void periodic() {
+   //reachGoal(desiredHeight);
+
   }
 }

@@ -132,10 +132,15 @@ public final class Constants {
     public static double kMaxVelocity = Meters.of(0.25).per(Second).in(MetersPerSecond); //0.75//2.5 //0.5
     public static double kMaxAcceleration = Meters.of(0.25).per(Second).per(Second).in(MetersPerSecondPerSecond); //1.5//2
 
-    public static double kL1Height = 0.45;
-    public static double kL2Height = 0.66;
-    public static double kL3Height = 1.04;
-    public static double kL4Height = 1.64;//1.24; 1.64
+
+    public enum Heights {
+      L1, L2, L3, L4, REST
+    }
+    
+    public static double kL1Height = 0.246;
+    public static double kL2Height = 0.502;
+    public static double kL3Height = 0.995;
+    public static double kL4Height = 1.519;//1.24; 1.64
     public static double kBottom = 0.0;
     public static double kHumanPlayerStation = 0.55;
 

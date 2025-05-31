@@ -19,6 +19,7 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorLimit;
 import frc.robot.Constants.ShooterConstants;
@@ -138,6 +139,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         double nextVoltage = m_Loop.getU(0);
         shooterMotor.setVoltage(nextVoltage);
+
+        SmartDashboard.putBoolean("hasCoral", hasCoral());
 
 
     

@@ -27,7 +27,7 @@ public class L4Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        elevatorSubsystem.reachGoal(ElevatorConstants.kL4Height);
+        elevatorSubsystem.changeDesiredHeight(ElevatorConstants.Heights.L4);
         
     }
 
@@ -43,18 +43,18 @@ public class L4Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kL4Height) {
+        /*if (elevatorSubsystem.getHeightMeters() < ElevatorConstants.kL4Height) {
             elevatorSubsystem.reachGoal(ElevatorConstants.kL4Height);
         } else {
             elevatorSubsystem.stopMotors();
-        }
+        }*/
 
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.stopMotors();
+        //elevatorSubsystem.stopMotors();
     }
     
 }

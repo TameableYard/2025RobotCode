@@ -38,6 +38,8 @@ import frc.robot.commands.mechanisms.elevator.ElevatorTestCommand;
 
 import frc.robot.commands.mechanisms.shooter.ShooterInitCommand;
 import frc.robot.commands.mechanisms.shooter.ShooterIntakeCommand;
+import frc.robot.commands.mechanisms.shooter.ShooterL1Command;
+import frc.robot.commands.mechanisms.shooter.ShooterL24Command;
 //import frc.robot.commands.mechanisms.pivot.shooter.ShooterTestCommand;
 //import frc.robot.subsystems.mechanisms.ElevatorSubsystem.runSysIdRoutine;
 import frc.robot.commands.swerve.FieldOrientedDrive;
@@ -166,6 +168,7 @@ public class RobotContainer {
     //driverXbox.rightBumper().whileTrue(new ClimberOutCommand(climberSubsystem));
     
     driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
+    driverXbox.leftTrigger().whileTrue(new ShooterL24Command(shooterSubsystem));
     
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
 

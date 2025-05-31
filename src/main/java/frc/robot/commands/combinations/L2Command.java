@@ -27,7 +27,7 @@ public class L2Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
         
-        elevatorSubsystem.reachGoal(ElevatorConstants.kL2Height);        
+        elevatorSubsystem.changeDesiredHeight(ElevatorConstants.Heights.L2);        
     }
 
     @Override
@@ -42,14 +42,14 @@ public class L2Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        elevatorSubsystem.reachGoal(ElevatorConstants.kL2Height);
+        //elevatorSubsystem.reachGoal(ElevatorConstants.kL2Height);
 
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.stopMotors();
+        //elevatorSubsystem.stopMotors();
     }
     
 }

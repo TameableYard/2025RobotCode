@@ -7,8 +7,6 @@ import frc.robot.subsystems.mechanisms.ElevatorSubsystem;
 
 public class L1Command extends Command {
 
-    //private ShuffleboardTab pivotTab = Shuffleboard.getTab("Pivot");
-
     private final ElevatorSubsystem elevatorSubsystem;
     public L1Command(ElevatorSubsystem eSubsystem) {
         elevatorSubsystem = eSubsystem;
@@ -23,7 +21,7 @@ public class L1Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
         
-        elevatorSubsystem.reachGoal(ElevatorConstants.kL1Height);
+        elevatorSubsystem.changeDesiredHeight(ElevatorConstants.Heights.L1);
 
         
     }
@@ -40,14 +38,14 @@ public class L1Command extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        elevatorSubsystem.reachGoal(ElevatorConstants.kL1Height);
+        //elevatorSubsystem.reachGoal(ElevatorConstants.kL1Height);
 
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }
  
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.stopMotors();
+        //elevatorSubsystem.stopMotors();
     }
     
 }
