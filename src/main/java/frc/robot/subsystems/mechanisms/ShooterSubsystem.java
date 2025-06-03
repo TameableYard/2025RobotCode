@@ -49,7 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
   // Outputs (what we can measure): [velocity], in radians per second.
   private final LinearSystem<N1, N1, N1> m_FlywheelPlant =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getNeo550(1), ShooterConstants.kFlywheelMomentOfInertia, ShooterConstants.kFlywheelGearing);
+          DCMotor.getNEO(1), ShooterConstants.kFlywheelMomentOfInertia, ShooterConstants.kFlywheelGearing);
 
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
@@ -67,7 +67,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final LinearQuadraticRegulator<N1, N1, N1> m_Controller =
       new LinearQuadraticRegulator<>(
           m_FlywheelPlant,
-          VecBuilder.fill(80.0), // qelms. Velocity error tolerance, in radians per second. Decrease
+          VecBuilder.fill(85.0), // qelms. Velocity error tolerance, in radians per second. Decrease
           // this to more heavily penalize state excursion, or make the controller behave more
           // aggressively.
           VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
@@ -96,7 +96,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public ShooterSubsystem () {
         SparkMaxConfig shooterMotorConfig = new SparkMaxConfig();
 
-        shooterMotorConfig.smartCurrentLimit(MotorLimit.Neo550.stall, MotorLimit.Neo550.free, MotorLimit.Neo550.stallRPM);
+        shooterMotorConfig.smartCurrentLimit(MotorLimit.Neo.stall, MotorLimit.Neo.free, MotorLimit.Neo.stallRPM);
 
         shooterMotor.configure(shooterMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
     }

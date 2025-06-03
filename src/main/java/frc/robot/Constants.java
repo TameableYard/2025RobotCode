@@ -99,14 +99,14 @@ public final class Constants {
     public static final int kBackMotorPort = 30;
     public static final int kFrontMotorPort = 31;
 
-    public static final double kElevatorKp = 16.128;//24.426;//41.787;//18;//18;//8.359375;//25//10;//30;//26.722;;//16;
+    public static final double kElevatorKp = 38.009;//16.128;//24.426;//41.787;//18;//18;//8.359375;//25//10;//30;//26.722;;//16;
     public static final double kElevatorKi = 0;
-    public static final double kElevatorKd = 3.0598;//3.0496;//4.6929;//0;//1.6047;
+    public static final double kElevatorKd = 4.3737;//3.0598;//3.0496;//4.6929;//0;//1.6047;
 
-    public static final double kElevatorkS = 0.37376;//0.5097;//0.37376;//0.3375*0.8;//0.3375;//0.2;//0.01964; //0.2//0.95//0.01964// volts (V)
-    public static final double kElevatorkV = 1.6273;//2.0295;//2.35;//3.07;//3.07//894; // volt per velocity (V/(m/s))
+    public static final double kElevatorkS = 0.64791;//0.37376;//0.5097;//0.37376;//0.3375*0.8;//0.3375;//0.2;//0.01964; //0.2//0.95//0.01964// volts (V)
+    public static final double kElevatorkV = 1.6052;//1.6273;//2.0295;//2.35;//3.07;//3.07//894; // volt per velocity (V/(m/s))
     public static final double kElevatorkA = 0;//0.24;//0;//0.16;//0.09//173; // volt per acceleration (V/(m/s²)) nh
-    public static final double kElevatorkG = 0.67113;//0.6514;//0.6375;//0.95; //1.25//0.91274// volts (V)
+    public static final double kElevatorkG = 1.21;//0.67113;//0.6514;//0.6375;//0.95; //1.25//0.91274// volts (V)
 
     public static final double kElevatorGearing = 6.88/3;//8.45/3; // was 2
 
@@ -152,11 +152,11 @@ public final class Constants {
 
     public static final int kShooterMotorPort = 35;
 
-    public static final int kSensorDistance = 115; //in mm
+    public static final int kSensorDistance = 65; //in mm
 
     public static double kFlywheelGearing = 4.0;
 
-    public static double kFlywheelMomentOfInertia = 0.568605;//0.00012916529; //kg * m^2
+    public static double kFlywheelMomentOfInertia = 0.023961077303410502;//0.568605;//0.00012916529; //kg * m^2
 
     public static double kStateStdDevs = 3.0;
     public static double kMeasurementStdDevs = 0.01;

@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase
 {
 
   public final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMinElevatorHeight,
-                                                                            Inches.of(12)));
+                                                                            Inches.of(24)));
   public final Trigger atMax = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMaxElevatorHeight,
                                                                             Inches.of(12)));
 
@@ -88,8 +88,8 @@ public class ElevatorSubsystem extends SubsystemBase
   private final SysIdRoutine      m_sysIdRoutine   =
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-          new SysIdRoutine.Config(Volts.per(Second).of(0.25),
-                                  Volts.of(6),
+          new SysIdRoutine.Config(Volts.per(Second).of(0.75),
+                                  Volts.of(5.5),
                                   Seconds.of(10)),
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motor(s).
@@ -209,9 +209,9 @@ public class ElevatorSubsystem extends SubsystemBase
   public Command runSysIdRoutine()
   {
     return (m_sysIdRoutine.dynamic(Direction.kForward).until(atMax))
-        //.andThen(m_sysIdRoutine.dynamic(Direction.kReverse).until(atMin))
-        //.andThen(m_sysIdRoutine.quasistatic(Direction.kForward).until(atMax))
-        //.andThen(m_sysIdRoutine.quasistatic(Direction.kReverse).until(atMin))
+        .andThen(m_sysIdRoutine.dynamic(Direction.kReverse).until(atMin))
+        .andThen(m_sysIdRoutine.quasistatic(Direction.kForward).until(atMax))
+        .andThen(m_sysIdRoutine.quasistatic(Direction.kReverse).until(atMin))
         .andThen(Commands.print("DONE"));
   }
 
