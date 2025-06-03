@@ -118,7 +118,7 @@ public final class Constants {
     public static final double kElevatorLowerPitch = Units.inchesToMeters(0.25);
     public static final double kElevatorLowerDrumRadius = (kElevatorLowerSprocketTeeth * kElevatorLowerPitch) / (2 * Math.PI);
 
-    public static final double kCarriageMass       = 18.1; // kg
+    public static final double kCarriageMass = 18.1; // kg
 
     // Encoder is reset to measure 0 at the bottom, so minimum height is 0.
     public static final Distance kLaserCANOffset    = Inches.of(3);
@@ -160,18 +160,18 @@ public final class Constants {
 
     public static double kStateStdDevs = 3.0;
     public static double kMeasurementStdDevs = 0.01;
-    public static double kQelms = 80.0;
+    public static double kQelms = 187.5;
     public static double kRelms = 12.0;
 
     public static double kMaxVoltage = 12.0;
 
     public static int kSpunUpRPM = 5500/4;
 
-    public static int kIntakeSpeed = 375;
+    public static int kIntakeSpeed = 375*2;
 
-    public static int kL1Speed = 250;
+    public static int kL1Speed = 250*2;
 
-    public static int kL24Speed = 250;
+    public static int kL24Speed = 250*2;
 
 
   }

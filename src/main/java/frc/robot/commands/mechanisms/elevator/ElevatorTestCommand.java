@@ -46,7 +46,7 @@ public class ElevatorTestCommand extends Command {
         SmartDashboard.putBoolean("Top Trigger", elevatorSubsystem.atMax.getAsBoolean());
         SmartDashboard.putBoolean("Bottom Trigger", elevatorSubsystem.atMin.getAsBoolean());
 
-        elevatorSubsystem.reachGoal(1);
+        elevatorSubsystem.reachGoal(0.3048);
 
 
 
