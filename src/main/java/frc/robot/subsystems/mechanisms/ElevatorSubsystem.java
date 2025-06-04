@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase
 {
 
   public final Trigger atMin = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMinElevatorHeight,
-                                                                            Inches.of(24)));
+                                                                            Inches.of(12)));
   public final Trigger atMax = new Trigger(() -> getLinearPosition().isNear(ElevatorConstants.kMaxElevatorHeight,
                                                                             Inches.of(12)));
 
@@ -88,8 +88,8 @@ public class ElevatorSubsystem extends SubsystemBase
   private final SysIdRoutine      m_sysIdRoutine   =
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-          new SysIdRoutine.Config(Volts.per(Second).of(0.75),
-                                  Volts.of(5.5),
+          new SysIdRoutine.Config(Volts.per(Second).of(0.25),
+                                  Volts.of(2),
                                   Seconds.of(10)),
           new SysIdRoutine.Mechanism(
               // Tell SysId how to plumb the driving voltage to the motor(s).
@@ -163,7 +163,7 @@ public class ElevatorSubsystem extends SubsystemBase
     double voltsOut = MathUtil.clamp(
         m_controller.calculate(getHeightMeters(), goal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
-                                              m_controller.getSetpoint().velocity), -10, 10);
+                                              m_controller.getSetpoint().velocity), -3, 3);
     m_BackMotor.setVoltage(voltsOut);
 
     SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), goal));
@@ -182,7 +182,7 @@ public class ElevatorSubsystem extends SubsystemBase
     double voltsOut = MathUtil.clamp(
         m_controller.calculate(getHeightMeters(), fakeGoal) +
         m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
-                                              m_controller.getSetpoint().velocity), -10, 10);
+                                              m_controller.getSetpoint().velocity), -3, 3);
     SmartDashboard.putNumber("elevatorPIDVoltage: ", m_controller.calculate(getHeightMeters(), fakeGoal));
     SmartDashboard.putNumber("elevatorFeedforwardVoltage: ", (m_feedforward.calculateWithVelocities(getVelocityMetersPerSecond(),
     m_controller.getSetpoint().velocity)));
@@ -350,12 +350,15 @@ public class ElevatorSubsystem extends SubsystemBase
       case REST:
         desiredHeight = ElevatorConstants.kBottom;
         break;
+      case HPS:
+        desiredHeight = ElevatorConstants.kHumanPlayerStation;
+        break;
     }
   }
 
   @Override
   public void periodic() {
-   //reachGoal(desiredHeight);
+   reachGoal(desiredHeight);
 
   }
 }

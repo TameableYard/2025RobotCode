@@ -27,7 +27,7 @@ public class HumanPlayerStationCommand extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
         
-        elevatorSubsystem.reachGoal(ElevatorConstants.kHumanPlayerStation);
+        elevatorSubsystem.changeDesiredHeight(ElevatorConstants.Heights.HPS);
         
 
         
@@ -45,7 +45,6 @@ public class HumanPlayerStationCommand extends Command {
         SmartDashboard.putNumber("frontMCAppliedOutput: ", elevatorSubsystem.frontMCAppliedOutput());
         SmartDashboard.putNumber("backMCAppliedOutput: ", elevatorSubsystem.backMCAppliedOutput());
 
-        elevatorSubsystem.reachGoal(ElevatorConstants.kHumanPlayerStation);
 
         //pivotSubsystem.reachSetpoint(0.48); //0.48 vertical, 0.386 com at 0 rad
     }

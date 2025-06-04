@@ -32,7 +32,7 @@ import frc.robot.commands.combinations.L1Command;
 import frc.robot.commands.combinations.L2Command;
 import frc.robot.commands.combinations.L3Command;
 import frc.robot.commands.combinations.L4Command;
-
+import frc.robot.commands.combinations.RestCommand;
 import frc.robot.commands.mechanisms.elevator.ElevatorDataCommand;
 import frc.robot.commands.mechanisms.elevator.ElevatorTestCommand;
 
@@ -88,6 +88,13 @@ public class RobotContainer {
   //private final runSysIdRoutine runsysidroutine = new runSysIdRoutine(elevatorSubsystem);
 
   private final ElevatorDataCommand elevatorDataCommand = new ElevatorDataCommand(elevatorSubsystem);
+
+  private final L1Command l1Command = new L1Command(elevatorSubsystem);
+  private final L2Command l2Command = new L2Command(elevatorSubsystem);
+  private final L3Command l3Command = new L3Command(elevatorSubsystem);
+  private final L4Command l4Command = new L4Command(elevatorSubsystem);
+  private final RestCommand restCommand = new RestCommand(elevatorSubsystem);
+  private final HumanPlayerStationCommand humanPlayerStationCommand = new HumanPlayerStationCommand(elevatorSubsystem);
 
   //private final PivotDataCommand pivotDataCommand = new PivotDataCommand(pivotSubsystem);
 
@@ -150,9 +157,17 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    driverXbox.b().whileTrue(elevatorTestCommand);
+    driverXbox.a().whileTrue(l1Command);
 
-    driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());
+    driverXbox.b().whileTrue(l2Command);
+
+    driverXbox.x().whileTrue(l3Command);
+
+    driverXbox.y().whileTrue(l4Command);
+
+    driverXbox.rightTrigger().whileTrue(humanPlayerStationCommand);
+
+    driverXbox.rightBumper().whileTrue(restCommand);
 
     //driverXbox.a().whileTrue(pivot40Command);//pivotTestCommand);
 
@@ -167,7 +182,7 @@ public class RobotContainer {
     //driverXbox.leftBumper().whileTrue(new ClimberInCommand(climberSubsystem));
     //driverXbox.rightBumper().whileTrue(new ClimberOutCommand(climberSubsystem));
     
-    driverXbox.rightTrigger().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
+    driverXbox.leftBumper().whileTrue(new ShooterIntakeCommand(shooterSubsystem));
     driverXbox.leftTrigger().whileTrue(new ShooterL24Command(shooterSubsystem));
     
     //driverXbox.x().whileTrue(elevatorSubsystem.runSysIdRoutine());

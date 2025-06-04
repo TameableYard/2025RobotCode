@@ -99,14 +99,14 @@ public final class Constants {
     public static final int kBackMotorPort = 30;
     public static final int kFrontMotorPort = 31;
 
-    public static final double kElevatorKp = 38.009;//16.128;//24.426;//41.787;//18;//18;//8.359375;//25//10;//30;//26.722;;//16;
+    public static final double kElevatorKp = 22.107;//17.488;//29.588;//38.009;//16.128;//24.426;//41.787;//18;//18;//8.359375;//25//10;//30;//26.722;;//16;
     public static final double kElevatorKi = 0;
-    public static final double kElevatorKd = 4.3737;//3.0598;//3.0496;//4.6929;//0;//1.6047;
+    public static final double kElevatorKd = 1.0;//3.0;//this worked except for jitter 3.4118;//3.2237;//3.6102;//4.3737;//3.0598;//3.0496;//4.6929;//0;//1.6047;
 
-    public static final double kElevatorkS = 0.64791;//0.37376;//0.5097;//0.37376;//0.3375*0.8;//0.3375;//0.2;//0.01964; //0.2//0.95//0.01964// volts (V)
-    public static final double kElevatorkV = 1.6052;//1.6273;//2.0295;//2.35;//3.07;//3.07//894; // volt per velocity (V/(m/s))
+    public static final double kElevatorkS = 0.16297;//0.57438;//0.49696;//0.64791;//0.37376;//0.5097;//0.37376;//0.3375*0.8;//0.3375;//0.2;//0.01964; //0.2//0.95//0.01964// volts (V)
+    public static final double kElevatorkV = 2.4246;//1.2806;//1.4548;//1.6052;//1.6273;//2.0295;//2.35;//3.07;//3.07//894; // volt per velocity (V/(m/s))
     public static final double kElevatorkA = 0;//0.24;//0;//0.16;//0.09//173; // volt per acceleration (V/(m/s²)) nh
-    public static final double kElevatorkG = 1.21;//0.67113;//0.6514;//0.6375;//0.95; //1.25//0.91274// volts (V)
+    public static final double kElevatorkG = 0.84962;//0.81118;//0.95879;//1.21;//0.67113;//0.6514;//0.6375;//0.95; //1.25//0.91274// volts (V)
 
     public static final double kElevatorGearing = 6.88/3;//8.45/3; // was 2
 
@@ -134,7 +134,7 @@ public final class Constants {
 
 
     public enum Heights {
-      L1, L2, L3, L4, REST
+      L1, L2, L3, L4, REST, HPS
     }
     
     public static double kL1Height = 0.246;
@@ -142,7 +142,7 @@ public final class Constants {
     public static double kL3Height = 0.995;
     public static double kL4Height = 1.519;//1.24; 1.64
     public static double kBottom = 0.0;
-    public static double kHumanPlayerStation = 0.55;
+    public static double kHumanPlayerStation = 0.035;
 
     public static final double kSafetyHeight = 0.25;
   }
@@ -167,7 +167,7 @@ public final class Constants {
 
     public static int kSpunUpRPM = 5500/4;
 
-    public static int kIntakeSpeed = 375*2;
+    public static int kIntakeSpeed = 500;//375*2;
 
     public static int kL1Speed = 250*2;
 
