@@ -137,10 +137,10 @@ public final class Constants {
       L1, L2, L3, L4, REST, HPS
     }
     
-    public static double kL1Height = 0.246;
-    public static double kL2Height = 0.502;
-    public static double kL3Height = 0.995;
-    public static double kL4Height = 1.519;//1.24; 1.64
+    public static double kL1Height = 0.44;
+    public static double kL2Height = 0.72;
+    public static double kL3Height = 1.11;
+    public static double kL4Height = 1.62;//1.24; 1.64
     public static double kBottom = 0.0;
     public static double kHumanPlayerStation = 0.035;
 
