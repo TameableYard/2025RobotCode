@@ -157,17 +157,17 @@ public class RobotContainer {
    */
 
   private void configureBindings() {
-    driverXbox.a().whileTrue(l1Command);
+    operatorXbox.a().whileTrue(l1Command);
 
-    driverXbox.b().whileTrue(l2Command);
+    operatorXbox.b().whileTrue(l2Command);
 
-    driverXbox.x().whileTrue(l3Command);
+    operatorXbox.x().whileTrue(l3Command);
 
-    driverXbox.y().whileTrue(l4Command);
+    operatorXbox.y().whileTrue(l4Command);
 
-    driverXbox.rightTrigger().whileTrue(humanPlayerStationCommand);
+    operatorXbox.rightTrigger().whileTrue(humanPlayerStationCommand);
 
-    driverXbox.rightBumper().whileTrue(restCommand);
+    operatorXbox.rightBumper().whileTrue(restCommand);
 
     //driverXbox.a().whileTrue(pivot40Command);//pivotTestCommand);
 

@@ -62,6 +62,10 @@ public class Vision {
 
 
     public Vision(SwerveDrive swerveDrive) {
+        getPigeon2(swerveDrive).getAngularVelocityXDevice().setUpdateFrequency(50);
+        getPigeon2(swerveDrive).getAngularVelocityYDevice().setUpdateFrequency(50);
+        getPigeon2(swerveDrive).getAngularVelocityZDevice().setUpdateFrequency(50);
+
         limelight = new Limelight("limelight");
         limelight.getSettings().withLimelightLEDMode(LEDMode.PipelineControl)
                                 .withCameraOffset(VisionConstants.LIMELIGHT_POSE)/* */
@@ -71,11 +75,6 @@ public class Vision {
                                                                                              DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityZDevice().getValueAsDouble()))))
                                 .withImuMode(LimelightSettings.ImuMode.InternalImu)
                                 .save();
-
-        
-
-        
-        
     }
 
     public void updatePoseEstimation(SwerveDrive swerveDrive) {
@@ -119,8 +118,4 @@ public class Vision {
                               DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityYDevice().getValueAsDouble()),
                               DegreesPerSecond.of(getPigeon2(swerveDrive).getAngularVelocityZDevice().getValueAsDouble()))));
     }
-    
-
-    
-
 }
