@@ -4,22 +4,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.VisionConstants;
-import frc.robot.subsystems.vision.Vision;
-import limelight.Limelight;
-import limelight.networktables.AngularVelocity3d;
-import limelight.networktables.LimelightPoseEstimator;
-import limelight.networktables.LimelightResults;
-import limelight.networktables.Orientation3d;
-import limelight.networktables.PoseEstimate;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meter;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.List;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -28,10 +19,15 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -39,155 +35,195 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry3d;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.util.sendable.Sendable;
+import swervelib.math.SwerveMath;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
-
-    //private Vision vision;
-
+    private final VisionSubsystem visionSubsystem;
     private boolean blueAlliance;
-
-    private RobotConfig config;
-
     private Pose2d startingPose;
-
-    Limelight limelight;
-
-    LimelightPoseEstimator limelightPoseEstimator;
-
-    Optional<PoseEstimate> poseEstimates;
-
-    private final boolean useVision = false; //TODO: change once limelight is reattached
     
-    private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
-
-    StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("MyPose", Pose2d.struct).publish();
-    StructArrayPublisher<Pose2d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose2d.struct).publish();
-
-    StructPublisher<Pose2d> visionpublisher = NetworkTableInstance.getDefault().getStructTopic("vision pose", Pose2d.struct).publish();
+    // Track if we've done initial sync
+    private boolean hasInitializedModules = false;
+    private final Timer initTimer = new Timer();
+    private static final double INIT_DELAY = 0.5; // Wait 500ms for encoders to stabilize
+    
+    // Track last known good gyro angle for collision detection
+    private Rotation2d lastGyroAngle = new Rotation2d();
+    private final Timer gyroCheckTimer = new Timer();
+    private static final double GYRO_CHECK_INTERVAL = 0.02; // 20ms
+    private static final double MAX_GYRO_JUMP = Math.toRadians(10); // 10 degrees per cycle
+    
+    StructPublisher<Pose2d> odometryPublisher = NetworkTableInstance.getDefault()
+        .getStructTopic("Odometry/RobotPose", Pose2d.struct).publish();
 
     public SwerveSubsystem(File directory) {
-        if (DriverStation.getAlliance().orElse(null) == DriverStation.Alliance.Red) { //TODO: add exception handling for no alliance found
+        // Determine alliance and starting pose
+        if (DriverStation.getAlliance().orElse(null) == DriverStation.Alliance.Red) {
             blueAlliance = false;
         } else {
             blueAlliance = true;
         }
 
-        startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(0))
-                                       : new Pose2d(new Translation2d(Meter.of(16),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(180));
+        startingPose = blueAlliance ? 
+            new Pose2d(new Translation2d(Meter.of(1), Meter.of(4)), Rotation2d.fromDegrees(0)) :
+            new Pose2d(new Translation2d(Meter.of(16), Meter.of(4)), Rotation2d.fromDegrees(180));
 
         SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+        
         try {
-            swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED, startingPose);
+            swerveDrive = new SwerveParser(directory).createSwerveDrive(
+                SwerveConstants.MAX_SPEED, 
+                startingPose
+            );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create swerve drive", e);
         }
 
-        swerveDrive.setHeadingCorrection(false); //only use if controlling bot via angle
-
+        // Configure swerve drive
+        swerveDrive.setHeadingCorrection(false);
+        
         if (SwerveDriveTelemetry.isSimulation) {
             swerveDrive.setCosineCompensator(false);
         } else {
             swerveDrive.setCosineCompensator(true);
         }
 
-        swerveDrive.setModuleEncoderAutoSynchronize(true, 1);
-
-        //swerveDrive.setAngularV
-
-        //TODO: set angular velocity compensation for skew correction after rotating
-
-        swerveDrive.pushOffsetsToEncoders();
-
-        if (useVision) {
-            limelightSetup();
-            //stop odometry thread when using vision so updates can be synchronized better
-            swerveDrive.stopOdometryThread();
-
-
-            
-        }
-        setupPathPlanner();
-
+        // CRITICAL: Enable auto-sync with longer delay for CANCoders to stabilize
+        // This ensures absolute encoders are read and applied every loop
+        swerveDrive.setModuleEncoderAutoSynchronize(true, 5); // Sync every 5 loops instead of 1
         
-        /*try {
-            config = RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    setupPathPlanner();*/
+        // Push offsets to make sure they're applied
+        swerveDrive.pushOffsetsToEncoders();
+        
+        // Initialize vision subsystem
+        visionSubsystem = new VisionSubsystem(swerveDrive);
+        
+        // Stop default odometry thread since vision subsystem will manage updates
+        swerveDrive.stopOdometryThread();
+        
+        // Start initialization timer
+        initTimer.start();
+        gyroCheckTimer.start();
+        
+        // Setup PathPlanner
+        setupPathPlanner();
+        
+        SmartDashboard.putBoolean("Swerve/ModulesInitialized", false);
     }
-
-    public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
-        /**
-         * Change this so the initial pose is fetched from the limelight and/or pathplanner path on startup
-         */
-        swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED, startingPose);//new Pose2d(new Translation2d(Meter.of(16.38), Meter.of(6.03)), Rotation2d.fromDegrees(0)));
-    }
-
-    private int outOfAreaReading = 0;
-    private boolean initialReading = false;
 
     @Override
     public void periodic() {
-        if (useVision) {
-            //swerveDrive.updateOdometry();
-            //vision.updatePoseEstimation(swerveDrive);
-            updatePoseEstimation();
+        // Handle module initialization with delay
+        if (!hasInitializedModules && initTimer.hasElapsed(INIT_DELAY)) {
+            synchronizeModuleEncoders();
+            hasInitializedModules = true;
+            SmartDashboard.putBoolean("Swerve/ModulesInitialized", true);
         }
-
-        //swerveDrive.updateOdometry();
-
-        //swerveDrive.getPose
-        publisher.set(swerveDrive.getPose());
-        //arrayPublisher.set(new)
         
+        // Check for gyro anomalies (possible collision)
+        if (gyroCheckTimer.hasElapsed(GYRO_CHECK_INTERVAL)) {
+            checkGyroForAnomalies();
+            gyroCheckTimer.reset();
+        }
+        
+        // Update odometry manually
+        swerveDrive.updateOdometry();
+        
+        // Publish pose for visualization
+        odometryPublisher.set(swerveDrive.getPose());
+        
+        // Update telemetry
+        updateTelemetry();
+    }
+    
+    /**
+     * Synchronizes all module encoders with their absolute positions
+     * Call this at startup and after collisions
+     */
+    public void synchronizeModuleEncoders() {
+        SmartDashboard.putString("Swerve/Status", "Syncing encoders...");
+        
+        // Force immediate synchronization of all modules
+        swerveDrive.synchronizeModuleEncoders();
+        
+        // Log the sync
+        SmartDashboard.putNumber("Swerve/LastSyncTime", Timer.getFPGATimestamp());
+        SmartDashboard.putString("Swerve/Status", "Encoders synced!");
+        
+        // Small delay to let sync complete
+        Timer.delay(0.1);
+    }
+    
+    /**
+     * Checks for sudden gyro angle changes that might indicate a collision
+     * or encoder desynchronization
+     */
+    private void checkGyroForAnomalies() {
+        Rotation2d currentGyroAngle = swerveDrive.getYaw();
+        double angleDifference = Math.abs(
+            currentGyroAngle.minus(lastGyroAngle).getRadians()
+        );
+        
+        // If we detect a large sudden change, it might be a collision
+        if (angleDifference > MAX_GYRO_JUMP) {
+            SmartDashboard.putBoolean("Swerve/PossibleCollisionDetected", true);
+            SmartDashboard.putNumber("Swerve/GyroJump", Math.toDegrees(angleDifference));
+            
+            // Auto-resync modules after potential collision
+            synchronizeModuleEncoders();
+        } else {
+            SmartDashboard.putBoolean("Swerve/PossibleCollisionDetected", false);
+        }
+        
+        lastGyroAngle = currentGyroAngle;
+    }
+    
+    /**
+     * Updates telemetry information on SmartDashboard
+     */
+    private void updateTelemetry() {
+        Pose2d pose = swerveDrive.getPose();
+        
+        SmartDashboard.putNumber("Swerve/RobotX", pose.getX());
+        SmartDashboard.putNumber("Swerve/RobotY", pose.getY());
+        SmartDashboard.putNumber("Swerve/RobotRotation", pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Swerve/GyroYaw", swerveDrive.getYaw().getDegrees());
+        SmartDashboard.putNumber("Swerve/GyroPitch", swerveDrive.getPitch().getDegrees());
+        SmartDashboard.putNumber("Swerve/GyroRoll", swerveDrive.getRoll().getDegrees());
+        
+        // Show individual module angles for debugging
+        var modules = swerveDrive.getModules();
+        for (int i = 0; i < modules.length; i++) {
+            SmartDashboard.putNumber("Swerve/Module" + i + "/Angle", 
+                modules[i].getAbsolutePosition());
+            SmartDashboard.putNumber("Swerve/Module" + i + "/Velocity", 
+                modules[i].getDriveVelocity());
+        }
     }
 
+    public void setupPathPlanner() {
+        RobotConfig config;
+        try {
+            config = RobotConfig.fromGUISettings();
 
-
-public void setupPathPlanner() {
-    //load the RobotConfig from the GUI settings
-    //TODO: store in Constants file
-    RobotConfig config;
-    try {
-        config = RobotConfig.fromGUISettings();
-
-        final boolean enableFeedforward = true;
-        //configure autobuilder last
-        AutoBuilder.configure(
-            this::getPose,
-            this::resetOdometry,
-            this::getRobotVelocity,
-            (speedsRobotRelative, moduleFeedForwards) -> {
-                if (enableFeedforward) {
-                    swerveDrive.drive(
-                        speedsRobotRelative,
-                        swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
-                        moduleFeedForwards.linearForces()
-                    );
-                } else {
-                    swerveDrive.setChassisSpeeds(speedsRobotRelative);
-                }
-            },
+            final boolean enableFeedforward = true;
+            
+            AutoBuilder.configure(
+                this::getPose,
+                this::resetOdometry,
+                this::getRobotVelocity,
+                (speedsRobotRelative, moduleFeedForwards) -> {
+                    if (enableFeedforward) {
+                        swerveDrive.drive(
+                            speedsRobotRelative,
+                            swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+                            moduleFeedForwards.linearForces()
+                        );
+                    } else {
+                        swerveDrive.setChassisSpeeds(speedsRobotRelative);
+                    }
+                },
                 new PPHolonomicDriveController(
                     new PIDConstants(5.0, 0.0, 0.0),
                     new PIDConstants(5.0, 0.0, 0.0)
@@ -201,193 +237,384 @@ public void setupPathPlanner() {
                     return false;
                 },
                 this
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        PathfindingCommand.warmupCommand().schedule();
+    } 
+
+    public Command getAutonomousCommand(String pathName) {
+        return new PathPlannerAuto(pathName);
+    }
+
+    private static double adjustSensitivity(double value) {
+        double sign = Math.signum(value);
+        double absvalue = Math.abs(value);
+        value = sign * Math.pow(absvalue, Constants.DriverConstants.kSensitivity);
+        return value;
+    }
+
+    public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle) {
+        xInput = adjustSensitivity(xInput);
+        yInput = adjustSensitivity(yInput);
+        return swerveDrive.swerveController.getTargetSpeeds(
+            xInput, yInput, angle.getRadians(), 
+            getHeading().getRadians(), SwerveConstants.MAX_SPEED
         );
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    }
 
-            PathfindingCommand.warmupCommand().schedule();
+    public Pose2d getPose() {
+        return swerveDrive.getPose();
+    }
+
+    public Rotation2d getHeading() {
+        return getPose().getRotation();
+    }
+
+    public SwerveDrive getSwerveDrive() {
+        return swerveDrive;
+    }
+
+    public ChassisSpeeds getFieldVelocity() {
+        return swerveDrive.getFieldVelocity();
+    }
+
+    public ChassisSpeeds getRobotVelocity() {
+        return swerveDrive.getRobotVelocity();
+    }
+
+    public SwerveController getSwerveController() {
+        return swerveDrive.swerveController;
+    }
+
+    public SwerveDriveConfiguration getSwerveDriveConfiguration() {
+        return swerveDrive.swerveDriveConfiguration;
+    }
+
+    public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+        swerveDrive.drive(translation, rotation, fieldRelative, false);
+    }
     
-} 
-
-  public Command getAutonomousCommand(String pathName)
-  {
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
-    return new PathPlannerAuto(pathName);
-    //swerveDrive.drive();
+    /**
+     * Zeros the gyro to current heading
+     */
+    public void zeroGyro() {
+        swerveDrive.zeroGyro();
+        lastGyroAngle = new Rotation2d(); // Reset tracking
+        SmartDashboard.putString("Swerve/Status", "Gyro zeroed");
+    }
     
-  }
-
-//  public Command runBackCommand()
-
+    /**
+     * Resets odometry and re-synchronizes all encoders
+     * Use this at match start or after significant impacts
+     */
+    public void resetOdometry(Pose2d initialHolonomicPose) {
+        // First synchronize encoders
+        synchronizeModuleEncoders();
+        
+        // Then reset odometry
+        swerveDrive.resetOdometry(initialHolonomicPose);
+        
+        // Reset vision tracking when odometry is reset
+        visionSubsystem.resetTracking();
+        
+        // Reset gyro tracking
+        lastGyroAngle = initialHolonomicPose.getRotation();
+        
+        SmartDashboard.putString("Swerve/Status", "Odometry reset");
+    }
     
-
-
-private static double adjustSensitivity(double value) {
-    double sign = Math.signum(value);
-    double absvalue = Math.abs(value);
-    value = sign * Math.pow(absvalue, Constants.DriverConstants.kSensitivity);
-    return value;
+    /**
+     * Full system reset - use when robot orientation is completely lost
+     * This is what should be called by your "zero" button
+     */
+    public void fullSystemReset() {
+        SmartDashboard.putString("Swerve/Status", "Full reset in progress...");
+        
+        // 1. Synchronize all module encoders first
+        synchronizeModuleEncoders();
+        
+        // 2. Zero the gyro
+        swerveDrive.zeroGyro();
+        
+        // 3. Reset odometry to current position (or known start position)
+        // Using current gyro angle (now zeroed) and current position estimate
+        Pose2d currentPose = new Pose2d(
+            swerveDrive.getPose().getTranslation(), 
+            new Rotation2d() // Gyro is now zero
+        );
+        swerveDrive.resetOdometry(currentPose);
+        
+        // 4. Reset vision tracking
+        visionSubsystem.resetTracking();
+        
+        // 5. Reset tracking variables
+        lastGyroAngle = new Rotation2d();
+        hasInitializedModules = true;
+        
+        // 6. Log the reset
+        SmartDashboard.putNumber("Swerve/LastFullResetTime", Timer.getFPGATimestamp());
+        SmartDashboard.putString("Swerve/Status", "Full reset complete!");
+        
+        Timer.delay(0.2); // Brief delay to ensure everything settles
+    }
+    
+    /**
+     * Gets the vision subsystem
+     */
+    public VisionSubsystem getVisionSubsystem() {
+        return visionSubsystem;
+    }
+    
+    /**
+     * Enables or disables vision updates
+     */
+    public void setVisionEnabled(boolean enabled) {
+        visionSubsystem.setVisionEnabled(enabled);
+    }
+    
+    /**
+     * Returns true if modules have been initialized
+     */
+    public boolean areModulesInitialized() {
+        return hasInitializedModules;
+    }
 }
+// Add these to your SwerveSubsystem.java
 
-public ChassisSpeeds getTargetSpeeds(double xInput, 
-                                     double yInput,
-                                     Rotation2d angle) {
-                                        xInput = adjustSensitivity(xInput);
-                                        yInput = adjustSensitivity(yInput);
-                                        
-                                        return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians(), SwerveConstants.MAX_SPEED);
-                                     }
+package frc.robot.subsystems.swerve;
 
-public Pose2d getPose() {
-    return swerveDrive.getPose();
-}
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public Rotation2d getHeading() {
-    return getPose().getRotation();
-}
+/**
+ * ADD THESE FIELDS TO SwerveSubsystem CLASS
+ */
+private Pigeon2 pigeon2;
+private final Timer pigeonHealthTimer = new Timer();
+private static final double HEALTH_CHECK_INTERVAL = 1.0; // Check every second
+private int pigeonErrorCount = 0;
+private int pigeonReadAttempts = 0;
+private double lastValidYaw = 0;
+private boolean pigeonHealthy = true;
 
-public SwerveDrive getSwerveDrive() {
-    return swerveDrive;
+/**
+ * ADD THIS TO YOUR CONSTRUCTOR (after swerveDrive is created)
+ */
+private void initializePigeonMonitoring() {
+    // Get Pigeon reference
+    pigeon2 = (Pigeon2) swerveDrive.getGyro().getIMU();
+    
+    // Verify Pigeon exists and is communicating
+    if (pigeon2 == null) {
+        SmartDashboard.putString("Pigeon/Status", "ERROR: Not found!");
+        pigeonHealthy = false;
+        return;
+    }
+    
+    // Check firmware version
+    String version = pigeon2.getVersion().toString();
+    SmartDashboard.putString("Pigeon/FirmwareVersion", version);
+    
+    // Get and display configuration
+    Pigeon2Configuration config = new Pigeon2Configuration();
+    StatusCode status = pigeon2.getConfigurator().refresh(config);
+    
+    if (status.isOK()) {
+        SmartDashboard.putString("Pigeon/Status", "Initialized");
+        SmartDashboard.putNumber("Pigeon/MountYaw", config.MountPose.MountPoseYaw);
+        SmartDashboard.putNumber("Pigeon/MountPitch", config.MountPose.MountPosePitch);
+        SmartDashboard.putNumber("Pigeon/MountRoll", config.MountPose.MountPoseRoll);
+    } else {
+        SmartDashboard.putString("Pigeon/Status", "Config read failed: " + status.getName());
+        pigeonHealthy = false;
+    }
+    
+    // Check initial readings
+    double initialYaw = pigeon2.getYaw().getValueAsDouble();
+    if (Double.isNaN(initialYaw)) {
+        SmartDashboard.putString("Pigeon/Status", "ERROR: Invalid readings!");
+        pigeonHealthy = false;
+    } else {
+        lastValidYaw = initialYaw;
+        SmartDashboard.putString("Pigeon/Status", "Healthy");
+    }
+    
+    pigeonHealthTimer.start();
 }
 
 /**
-   * Gets the current field-relative velocity (x, y and omega) of the robot
-   *
-   * @return A ChassisSpeeds object of the current field-relative velocity
-   */
-public ChassisSpeeds getFieldVelocity() {
-    return swerveDrive.getFieldVelocity();
-}
-
-  /**
-   * Gets the current velocity (x, y and omega) of the robot
-   *
-   * @return A {@link ChassisSpeeds} object of the current velocity
-   */
-public ChassisSpeeds getRobotVelocity() {
-    return swerveDrive.getRobotVelocity();
-}
-
-  /**
-   * Get the {@link SwerveController} in the swerve drive.
-   *
-   * @return {@link SwerveController} from the {@link SwerveDrive}.
-   */
-public SwerveController getSwerveController() {
-    return swerveDrive.swerveController;
-}
-
-  /**
-   * Get the {@link SwerveDriveConfiguration} object.
-   *
-   * @return The {@link SwerveDriveConfiguration} fpr the current drive.
-   */
-public SwerveDriveConfiguration getSwerveDriveConfiguration() {
-    return swerveDrive.swerveDriveConfiguration;
-}
-
-public void drive(Translation2d translation, double rotation, boolean fieldRelative)
-  {
-    swerveDrive.drive(translation,
-                      rotation,
-                      fieldRelative,
-                      false); // Open loop is disabled since it shouldn't be used most of the time.
-  }
-  
-public void zeroGyro() {
-    swerveDrive.zeroGyro();
-}
-
-public void resetOdometry(Pose2d initialHolonomicPose){
-  swerveDrive.resetOdometry(initialHolonomicPose);
-}
-
-public void limelightSetup() {
-    swerveDrive.stopOdometryThread();
-    limelight = new Limelight("limelight");
-    limelight.getSettings()
-             .withPipelineIndex(0)
-             .withCameraOffset(VisionConstants.LIMELIGHT_POSE)
-             .save();
+ * ADD THIS TO YOUR periodic() METHOD
+ */
+private void monitorPigeonHealth() {
+    if (!pigeonHealthTimer.hasElapsed(HEALTH_CHECK_INTERVAL)) {
+        return;
+    }
     
-    limelightPoseEstimator = limelight.getPoseEstimator(true);
-            
-}
-
-public void updatePoseEstimation() {
-    limelight.getSettings()
-    .withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
-        new AngularVelocity3d(DegreesPerSecond.of(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityXDevice().getValueAsDouble()),
-                              DegreesPerSecond.of(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityYDevice().getValueAsDouble()),
-                              DegreesPerSecond.of(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityZDevice().getValueAsDouble()))))
-             
-             .save();
-
-    poseEstimates = limelightPoseEstimator.getPoseEstimate();
-    Optional<LimelightResults> results = limelight.getLatestResults();
-
-    poseEstimates.ifPresent((PoseEstimate poseEstimate) -> {
-        if (poseEstimates.get().tagCount > 0) {
-            // Add it to the pose estimator as long as robot is rotating at less than 720 degrees per second
-            if (Math.abs(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityYDevice().getValueAsDouble()) < Math.toRadians(720)){
-                
-                //SmartDashboard.putData("visionpose", (Sendable) poseEstimate.pose.toPose2d());
-                swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-                swerveDrive.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
-            }
-        }
-    });
-/*
-    if (results.isPresent()) {
-        LimelightResults result = results.get();
-        PoseEstimate poseEstimate = poseEstimates.get();
-        SmartDashboard.putNumber("Avg Tag Ambiguity", poseEstimate.getAvgTagAmbiguity());
-        SmartDashboard.putNumber("Min Tag Ambiguity", poseEstimate.getMinTagAmbiguity());
-        SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
-        SmartDashboard.putNumber("Avg Distance", poseEstimate.avgTagDist);
-        SmartDashboard.putNumber("Avg Tag Area", poseEstimate.avgTagArea);
-        SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-        SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-        SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
-        SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
-        SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
-        if (result.valid) {
-            Pose2d blueSidePose = result.getBotPose2d(Alliance.Blue);
-            
-
-            //SmartDashboard.putData("visionpose", Sendable<blueSidePose>);
-            //double distanceToPose = blueSidePose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
-            if (poseEstimate.tagCount > 0) {
-                visionpublisher.set(blueSidePose);
-                swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-                swerveDrive.addVisionMeasurement(blueSidePose, Timer.getTimestamp());
-            }
-            if (distanceToPose < 0.5 || (outOfAreaReading > 10) || (outOfAreaReading > 10 && !initialReading)) {
-                if (!initialReading) {
-                    initialReading = true;
-                }
-                outOfAreaReading = 0;
-                swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-                swerveDrive.addVisionMeasurement(blueSidePose, Timer.getTimestamp());
-            } else {
-                outOfAreaReading += 1;
-            }
+    pigeonHealthTimer.reset();
+    pigeonReadAttempts++;
+    
+    // Try to read yaw
+    double currentYaw = pigeon2.getYaw().getValueAsDouble();
+    
+    // Check for invalid reading
+    if (Double.isNaN(currentYaw)) {
+        pigeonErrorCount++;
+        pigeonHealthy = false;
+        SmartDashboard.putString("Pigeon/Status", "ERROR: Invalid reading!");
+    } else {
+        // Check for unreasonable jump (possible desync)
+        double yawDelta = Math.abs(currentYaw - lastValidYaw);
         
+        // Normalize to 0-180 range (account for wraparound)
+        if (yawDelta > 180) {
+            yawDelta = 360 - yawDelta;
         }
-    }*/
-    swerveDrive.updateOdometry();
+        
+        // If we jumped more than 30 degrees in 1 second while stationary, something's wrong
+        ChassisSpeeds speeds = swerveDrive.getRobotVelocity();
+        double rotationSpeed = Math.abs(speeds.omegaRadiansPerSecond);
+        
+        if (yawDelta > 30 && rotationSpeed < 0.1) {
+            SmartDashboard.putBoolean("Pigeon/SuspiciousJump", true);
+            SmartDashboard.putNumber("Pigeon/JumpAmount", yawDelta);
+            
+            // Auto-resync if we detect this
+            synchronizeModuleEncoders();
+        } else {
+            SmartDashboard.putBoolean("Pigeon/SuspiciousJump", false);
+        }
+        
+        lastValidYaw = currentYaw;
+    }
     
+    // Calculate error rate
+    double errorRate = (double) pigeonErrorCount / pigeonReadAttempts * 100.0;
+    
+    // Update dashboard
+    SmartDashboard.putNumber("Pigeon/ErrorCount", pigeonErrorCount);
+    SmartDashboard.putNumber("Pigeon/ErrorRate", errorRate);
+    SmartDashboard.putBoolean("Pigeon/Healthy", pigeonHealthy && errorRate < 5.0);
+    
+    // Detailed readings
+    SmartDashboard.putNumber("Pigeon/Yaw", currentYaw);
+    SmartDashboard.putNumber("Pigeon/Pitch", pigeon2.getPitch().getValueAsDouble());
+    SmartDashboard.putNumber("Pigeon/Roll", pigeon2.getRoll().getValueAsDouble());
+    
+    // Angular velocities (useful for detecting mounting issues)
+    SmartDashboard.putNumber("Pigeon/AngVelX", pigeon2.getAngularVelocityXWorld().getValueAsDouble());
+    SmartDashboard.putNumber("Pigeon/AngVelY", pigeon2.getAngularVelocityYWorld().getValueAsDouble());
+    SmartDashboard.putNumber("Pigeon/AngVelZ", pigeon2.getAngularVelocityZWorld().getValueAsDouble());
+    
+    // Temperature (can indicate electrical issues)
+    SmartDashboard.putNumber("Pigeon/Temperature", pigeon2.getTemperature().getValueAsDouble());
+    
+    // Supply voltage (low voltage can cause problems)
+    SmartDashboard.putNumber("Pigeon/SupplyVoltage", pigeon2.getSupplyVoltage().getValueAsDouble());
+    
+    // Check for concerning conditions
+    checkPigeonWarnings();
 }
-/*
-public void updateRobotOrientation(SwerveDrive swerveDrive) {
-        limelight.getSettings().withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
-        new AngularVelocity3d(DegreesPerSecond.of(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityXDevice().getValueAsDouble()),
-                              DegreesPerSecond.of(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityYDevice().getValueAsDouble()),
-                              DegreesPerSecond.of(((Pigeon2) swerveDrive.getGyro().getIMU()).getAngularVelocityZDevice().getValueAsDouble()))));
-    }*/
 
+/**
+ * ADD THIS METHOD
+ */
+private void checkPigeonWarnings() {
+    boolean hasWarning = false;
+    StringBuilder warnings = new StringBuilder();
+    
+    // Check temperature
+    double temp = pigeon2.getTemperature().getValueAsDouble();
+    if (temp > 70) {
+        warnings.append("HIGH TEMP! ");
+        hasWarning = true;
+    }
+    
+    // Check voltage
+    double voltage = pigeon2.getSupplyVoltage().getValueAsDouble();
+    if (voltage < 4.5 || voltage > 5.5) {
+        warnings.append("BAD VOLTAGE! ");
+        hasWarning = true;
+    }
+    
+    // Check error rate
+    double errorRate = (double) pigeonErrorCount / Math.max(1, pigeonReadAttempts) * 100.0;
+    if (errorRate > 10) {
+        warnings.append("HIGH ERROR RATE! ");
+        hasWarning = true;
+    }
+    
+    // Check for extreme pitch/roll (mounting issue?)
+    double pitch = Math.abs(pigeon2.getPitch().getValueAsDouble());
+    double roll = Math.abs(pigeon2.getRoll().getValueAsDouble());
+    
+    if (pitch > 15 || roll > 15) {
+        warnings.append("TILTED MOUNTING! ");
+        hasWarning = true;
+    }
+    
+    if (hasWarning) {
+        SmartDashboard.putString("Pigeon/Warnings", warnings.toString());
+        SmartDashboard.putBoolean("Pigeon/HasWarnings", true);
+    } else {
+        SmartDashboard.putString("Pigeon/Warnings", "None");
+        SmartDashboard.putBoolean("Pigeon/HasWarnings", false);
+    }
 }
 
+/**
+ * ADD THIS METHOD - Call from RobotContainer for testing
+ */
+public void performPigeonFactoryReset() {
+    SmartDashboard.putString("Pigeon/Status", "Factory reset in progress...");
+    
+    // Clear accumulated faults
+    pigeon2.clearStickyFaults();
+    
+    // Apply factory default configuration
+    Pigeon2Configuration config = new Pigeon2Configuration();
+    StatusCode status = pigeon2.getConfigurator().apply(config);
+    
+    if (status.isOK()) {
+        SmartDashboard.putString("Pigeon/Status", "Factory reset complete!");
+        
+        // Reset our tracking variables
+        pigeonErrorCount = 0;
+        pigeonReadAttempts = 0;
+        pigeonHealthy = true;
+        
+        // Wait for Pigeon to stabilize
+        Timer.delay(1.0);
+        
+        // Update last valid reading
+        lastValidYaw = pigeon2.getYaw().getValueAsDouble();
+    } else {
+        SmartDashboard.putString("Pigeon/Status", "Factory reset FAILED: " + status.getName());
+    }
+}
 
+/**
+ * ADD THIS METHOD - Returns health status
+ */
+public boolean isPigeonHealthy() {
+    double errorRate = (double) pigeonErrorCount / Math.max(1, pigeonReadAttempts) * 100.0;
+    return pigeonHealthy && errorRate < 5.0;
+}
+
+/**
+ * MODIFY YOUR EXISTING periodic() TO CALL:
+ */
+@Override
+public void periodic() {
+    // ... existing code ...
+    
+    // Add Pigeon monitoring
+    monitorPigeonHealth();
+    
+    // ... rest of existing code ...
+}
