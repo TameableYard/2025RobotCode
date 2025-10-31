@@ -1,17 +1,5 @@
 # Robot Documentation - 2025 Reefscape
 
-This directory contains comprehensive documentation for the robot's systems and troubleshooting procedures.
-
-## 📁 Directory Structure
-
-```
-docs/
-├── vision/          # Vision system setup and usage
-├── swerve/          # Swerve drive troubleshooting
-├── driver/          # Driver quick references
-└── README.md        # This file
-```
-
 ## 🛠️ System Overview
 
 ### Swerve Drive System
